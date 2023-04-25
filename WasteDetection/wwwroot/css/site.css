@@ -1,0 +1,174 @@
+html {
+    font-size: 14px;
+    --main-color: #191970; /* Midnight blue */
+    --secondary-color: #1d2951;
+    --ternary-color: #9797de;
+    --block-bg-color: #898cd345;
+    --contrast-color: #002366;
+    --light-color: #dbe4f4;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+    html {
+        font-size: 14px;
+    }
+
+    .logo-icons-container {
+        padding-top: 2em;
+        padding-bottom: 2em;
+    }
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+.bg-navbar {
+    background: rgb(25,25,112);
+    background: linear-gradient(90deg, rgba(25,25,112,1) 0%, rgba(0,35,102,1) 35%, rgba(1,102,214,1) 100%);
+}
+
+.bg-navbar-gradient {
+    background: rgb(151,151,222);
+    background: linear-gradient(90deg, rgba(151,151,222,1) 0%, rgba(0,35,102,1) 75%, rgba(25,25,112,1) 100%);
+}
+
+.logo-icons-container {
+    display: block;
+    position: relative;
+    text-align: center;
+    padding-left: 2em;
+    padding-right: 2em;
+}
+
+.looking-glass-logo-icon {
+    position: absolute;
+    margin-left: -0.25em;
+    margin-top: -0.15em;
+    font-size: 3em;
+    font-weight: bold;
+    color: var(--main-color);
+}
+
+.trash-can-logo-icon {
+    position: relative;
+    font-size: 1em;
+    font-weight: bold;
+    color: var(--main-color);
+}
+
+.home-icons-container {
+    display: block;
+    position: relative;
+    padding-top: 2em;
+    padding-left: 2em;
+    padding-right: 2em;
+    padding-bottom: 2em;
+}
+
+.looking-glass-home-icon {
+    position: absolute;
+    margin-left: -0.25em;
+    margin-top: -0.2em;
+    font-size: 8em;
+    font-weight: bold;
+    color: var(--main-color);
+}
+
+.trash-can-home-icon {
+    position: relative;
+    font-size: 3em;
+    font-weight: bold;
+    color: var(--ternary-color);
+}
+
+/* Container */
+.grid-two {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 2em;
+}
+
+.block-card {
+    color: var(--main-color);
+    background: var(--block-bg-color);
+    border: 0.3em inset var(--ternary-color);
+    border-radius: 0.8em 0.8em;
+    padding: 2em;
+}
+
+.next-step-container {
+    display: flex;
+    justify-content: end;
+    justify-self: end;
+    padding: 1em;
+    margin-top: 3em;
+    margin-right: 3em;
+    margin-bottom: 3em;
+}
+
+.next-step-link {
+    display: flex;
+    justify-content: end;
+    text-decoration: none;
+    padding: 1em;
+    color: var(--main-color);
+    background: var(--ternary-color);
+    border: 0.3em outset var(--secondary-color);                                                                                                                                         );
+    border-radius: 0.8em 0.8em;
+}
+                                                                                                                                  
+/* Licensing */
+.licenses-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 2em;
+}
+
+.license-main {
+    grid-column-start: 1;
+    grid-column-end: 3;
+    display: flex;
+}
+
+.license-info {
+    display: grid;
+    grid-gap: 1em;
+}
+
+.licence-holder {
+    text-decoration: none;
+    color: var(--main-color);
+}
+
+    .licence-holder > h4{
+        font-weight: bold;
+    }
+
+    .licence-holder:hover {
+        text-decoration: underline;
+        color: var(--ternary-color);
+    }
+
+.license-download, .license-link {
+    text-decoration: none;
+    color: var(--secondary-color);
+    justify-self: end;
+    text-align: end;
+}
+
+    .license-download:hover, .license-link:hover {
+        text-decoration: underline;
+        color: var(--ternary-color);
+    }

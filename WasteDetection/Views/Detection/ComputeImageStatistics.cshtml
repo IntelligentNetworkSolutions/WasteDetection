@@ -1,0 +1,109 @@
+﻿@{
+    ViewData["Title"] = "Compute Image Statistics";
+}
+
+
+<div class="row">
+    <div class="grid-two">
+        <div class="block-card">
+            <h4 class="text-center">
+                Compute Image Statistics
+            </h4>
+            <hr />
+            <div class="form-group col-md-6 col-sm-12">
+                <label class="form-label">Input image full(absolute) file path </label>
+                <input id="inpImgPath" type="text" class="form-control" />
+            </div>
+            <div class="row d-flex justify-content-end me-md-4 me-sm-1">
+                <button type="button" onclick="ComputeImageStatisitcs();" class="btn btn-primary col-md-3 col-sm-12">Compute</button>
+            </div>
+        </div>
+        <div class="block-card">
+            <h4 class="text-center">
+                Results
+            </h4>
+            <hr />
+            <div id="loading" class="col-12 h-50 text-center d-none p-4">
+                <i class="fa-solid fa-code fa-spin fa-4x"></i>
+            </div>
+            <div id="divXmlResult" class="bg-secondary">
+                <textarea id="textAreaXmlResult" class="col-12">
+                </textarea>
+            </div>
+        </div>
+    </div>
+
+    <div class="next-step-container">
+        <a href="@Url.Action("TrainImageClassifier", "Detection")" class="next-step-link">
+            Next Step - Train Image Classifier
+        </a>
+    </div>
+</div>
+
+@section Scripts {
+
+    <script type="text/javascript">
+
+        $(function(){
+        });
+
+        function ComputeImageStatisitcs() {
+            $("#loading").removeClass("d-none");
+
+            let filePath = $("#inpImgPath").val();
+            let fileExtension = filePath.substr(filePath.lastIndexOf(".") + 1).toLowerCase();
+            if (!["jpg", "jpeg", "png", "tif", "tiff"].includes(fileExtension)) {
+                swal("Invalid file type. Please select an image file.");
+                $("#loading").addClass("d-none");
+                return
+            }
+
+            let fileData = new FormData();
+            fileData.append("inpImgPath", filePath);
+
+            $.ajax({
+                url: "@Url.Action("ComputeImageStatisticsRequest", "Detection")",
+                type: "POST",
+                contentType: false,
+                processData: false,
+                data: fileData,
+                success: function (data) {
+                    if (data) {
+                        ShowXmlResult(data);
+                    }
+                    else {
+                        swal("error");
+                    }
+                },
+                error: function (req, status, error) {
+                    swal("error");
+                },
+                complete: function () {
+                    $("#loading").addClass("d-none");
+                }
+            });
+        }
+
+        function ShowXmlResult(xmlPath) {
+            loadXMLDocIntoTextArea(xmlPath);
+        }
+
+        function loadXMLDocIntoTextArea(xmlPath) {
+            var xmlhttp = new XMLHttpRequest();
+            xmlhttp.onreadystatechange = function () {
+
+                // Request finished and response
+                // is ready and Status is "OK"
+                if (this.readyState == 4 && this.status == 200) {
+                    $("#textAreaXmlResult").text(this.responseText);
+                    $("#textAreaXmlResult").attr("rows", "30");
+                }
+            };
+
+            // employee.xml is the external xml file
+            xmlhttp.open("GET", xmlPath, true);
+            xmlhttp.send();
+        }
+
+    </script>
+}

@@ -1,0 +1,49 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="wwwroot\detection\compute_image_statistics\calculated\**" />
+    <Compile Remove="wwwroot\detection\image_classifier\calculated\**" />
+    <Compile Remove="wwwroot\detection\prepared_inputs\**" />
+    <Compile Remove="wwwroot\detection\train_image_classifier\calculated\**" />
+    <Content Remove="wwwroot\detection\compute_image_statistics\calculated\**" />
+    <Content Remove="wwwroot\detection\image_classifier\calculated\**" />
+    <Content Remove="wwwroot\detection\prepared_inputs\**" />
+    <Content Remove="wwwroot\detection\train_image_classifier\calculated\**" />
+    <EmbeddedResource Remove="wwwroot\detection\compute_image_statistics\calculated\**" />
+    <EmbeddedResource Remove="wwwroot\detection\image_classifier\calculated\**" />
+    <EmbeddedResource Remove="wwwroot\detection\prepared_inputs\**" />
+    <EmbeddedResource Remove="wwwroot\detection\train_image_classifier\calculated\**" />
+    <None Remove="wwwroot\detection\compute_image_statistics\calculated\**" />
+    <None Remove="wwwroot\detection\image_classifier\calculated\**" />
+    <None Remove="wwwroot\detection\prepared_inputs\**" />
+    <None Remove="wwwroot\detection\train_image_classifier\calculated\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="wwwroot\images\1to10.tif" />
+    <Content Remove="wwwroot\images\ImageClassifier_e13afc97-9535-43ef-bcfd-f491d9c3aad9_cli.tif" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CliWrap" Version="3.6.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.5" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.5">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.5" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite.NetTopologySuite" Version="7.0.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\detection\compute_image_statistics\prepared\" />
+    <Folder Include="wwwroot\detection\image_classifier\prepared\" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,145 @@
+﻿@{
+    ViewData["Title"] = "Train Image Classifier";
+}
+
+<div class="row">
+    <h4 class="text-center">
+        Train Image Classifier
+    </h4>
+    <div class="grid-two mt-4">
+        <div class="block-card form-group">
+            <label class="form-label">Input Image full(absolute) file path (.png, .tif, .tiff)</label>
+            <input id="inpImgPath" type="text" class="form-control" placeholder="C:\data\1to10\1to10.tif" />
+        </div>
+        <div class="block-card form-group">
+            <label class="form-label">Input Training Vector full(absolute) file path (.shp)</label>
+            <input id="inpTrainingVectorPath" type="text" class="form-control" placeholder="C:\data\1to10\shape_files\training.shp" />
+        </div>
+        <div class="block-card form-group">
+            <label class="form-label">Input XML Statistics file path (.xml)</label>
+            <input id="inpXmlStatisticsPath" type="text" class="form-control" placeholder="C:\data\1to10\statistics\latest.xml" />
+        </div>
+        <div class="block-card form-group">
+            <label class="form-label">Input Validation Vector full(absolute) file path (.shp)</label>
+            <input id="inpValidationVectorPath" type="text" class="form-control" placeholder="C:\data\1to10\shape_files\validation.shp" />
+        </div>
+    </div>
+    <div class="row justify-content-center mt-4">
+        <button type="button" onclick="TrainImageClassifier();" class="btn btn-primary col-md-3 col-sm-6">Train</button>
+    </div>
+
+    <div class="row justify-content-center mt-4">
+        <div class="block-card">
+            <h4 class="text-center">
+                Results
+            </h4>
+            <hr />
+            <div id="loading" class="col-12 h-50 text-center d-none p-4">
+                <i class="fa-solid fa-code fa-spin fa-4x"></i>
+            </div>
+            <div id="divResult" class="grid-two">
+                <div class="text-center">
+                    <label class="form-label" onclick="CopyModelPathToClipBoard()">
+                        Copy the Model Path to use in the next Classification step <i class="fa-solid fa-copy"></i>
+                    </label>
+                    <hr />
+                    <input id="resultModelPath" type="text" class="form-control" />
+                </div>
+                <div class="text-center">
+                    <label class="form-label">
+                        Download Model for further use <i class="fa-solid fa-download"></i></i>
+                    </label>
+                    <hr />
+                    <a id="linkModelPath" href="#" class="btn btn-outline-primary">
+                        Download Model File (.mdl)
+                    </a>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+    <div class="next-step-container">
+        <a href="@Url.Action("ImageClassifier", "Detection")" class="next-step-link">
+            Next Step - Image Classifiaction
+        </a>
+    </div>
+</div>
+
+
+
+@section Scripts {
+
+    <script type="text/javascript">
+
+        $(function () {
+
+        });
+
+        function CopyModelPathToClipBoard() {
+            // Get the text field
+            var copyText = document.getElementById("resultModelPath");
+
+            // Select the text field
+            copyText.select();
+            copyText.setSelectionRange(0, 99999); // For mobile devices
+
+            // Copy the text inside the text field
+            navigator.clipboard.writeText(copyText.value);
+        }
+
+        function TrainImageClassifier() {
+            $("#loading").removeClass("d-none");
+
+            let inpImgPath = $("#inpImgPath").val();
+
+            let inpTrainingVectorPath = $("#inpTrainingVectorPath").val();
+
+            let inpValidationVectorPath = $("#inpValidationVectorPath").val();
+
+            let inpXmlStatisticsPath = $("#inpXmlStatisticsPath").val();
+
+            let fileData = new FormData();
+            fileData.append("inpImgPath", inpImgPath);
+            fileData.append("inpTrainingVectorPath", inpTrainingVectorPath);
+            fileData.append("inpValidationVectorPath", inpValidationVectorPath);
+            fileData.append("inpXmlStatisticsPath", inpXmlStatisticsPath);
+
+            $.ajax({
+                url: "@Url.Action("TrainImageClassifier", "Detection")",
+                type: "POST",
+                async: true,
+                contentType: false,
+                processData: false,
+                data: fileData,
+                success: function (response) {
+                    console.log(response);
+                    if (response) {
+                        let splitPaths = response.split('---');
+                        let relativePath = splitPaths[0];
+                        let absolutePath = splitPaths[1];
+                        ShowResult(relativePath, absolutePath);
+                    }
+                    else {
+                        swal("error");
+                    }
+                },
+                error: function (req, status, error) {
+                    swal("error");
+                },
+                complete: function () {
+                    $("#loading").addClass("d-none");
+                }
+            });
+        }
+
+        function ShowResult(modelRelativePath, modelAbsolutePath) {
+            $("#divResult").removeClass('d-none');
+            $("#resultModelPath").val(modelAbsolutePath);
+            $("#resultModelPath").text(modelAbsolutePath);
+            $("#linkModelPath").attr("href", modelRelativePath);
+        }
+
+    </script>
+
+}

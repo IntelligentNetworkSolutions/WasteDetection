@@ -1,0 +1,52 @@
+﻿@{
+    ViewData["Title"] = "Map";
+}
+
+@section Styles{
+    <link rel="stylesheet" href="/css/ol/ol.css">
+    <link rel="stylesheet" href="/css/ol/ol-ext.min.css">
+}
+
+<div class="row">
+    <div id="map" class="map" style="width: 500px; height: 500px;"></div>
+</div>
+
+@section Scripts {
+    <script src="/lib/proj4/proj4-src.js"></script>
+    <script src="/lib/ol/ol.js"></script>
+    <script src="/lib/ol/ol-ext.min.js"></script>
+    <script src="/lib/geotiff/geotiff.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/elm-pep@1.0.6/dist/elm-pep.js"></script>
+
+    <script>
+        $(function(){
+            const source = new ol.source.GeoTIFF({
+                sources: [
+                    {
+                        //url: '/images/1to10.tif',
+                        url: '/detection/prepared_inputs/1to10_gdal_rendered.tif',
+                    },
+                ],
+            });
+
+            const map = new ol.Map({
+                target: 'map',
+                layers: [
+                    new ol.layer.Tile({
+                        source: new ol.source.OSM(),
+                    }),
+                    new ol.layer.WebGLTile({
+                        source: source,
+                    }),
+                    
+                ],
+                view: new ol.View({
+                    center: [2385044,5154446],
+                    zoom: 10,
+                })
+                //view: source.getView(),
+            });
+        });
+        
+    </script>
+}

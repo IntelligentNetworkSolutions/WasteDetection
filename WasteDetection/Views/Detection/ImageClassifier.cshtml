@@ -1,0 +1,146 @@
+﻿@{
+    ViewData["Title"] = "Image Classifier";
+}
+
+@section Styles{
+    <link rel="stylesheet" href="/css/ol/ol.css">
+    <link rel="stylesheet" href="/css/ol/ol-ext.min.css">
+}
+
+<div class="row">
+    <h4 class="text-center">
+        Image Classifier
+    </h4>
+    <div class="grid-two mt-4">
+        <div class="block-card form-group">
+            <label class="form-label">Input Image full(absolute) file path (.png, .tif, .tiff)</label>
+            <input id="inpImgPath" type="text" class="form-control" placeholder="C:\data\1to10\1to10.tif" />
+        </div>
+        <div class="block-card form-group">
+            <label class="form-label">Input Model full(absolute) file path (.mdl)</label>
+            <input id="inpModelPath" type="text" class="form-control" placeholder="C:\data\1to10\models\model.mdl" />
+        </div>
+        <div class="block-card form-group">
+            <label class="form-label">Input XML Statistics file path (.xml)</label>
+            <input id="inpXmlStatisticsPath" type="text" class="form-control" placeholder="C:\data\1to10\statistics\latest.xml" />
+        </div>
+    </div>
+    <div class="row justify-content-center mt-4">
+        <button type="button" onclick="ImageClassifier();" class="btn btn-primary col-md-3 col-sm-6">Classify</button>
+    </div>
+
+    <div class="row justify-content-center mt-4">
+        <div class="block-card">
+            <h4 class="text-center">
+                Results
+            </h4>
+            <hr />
+            <div id="loading" class="col-12 h-50 text-center d-none p-4">
+                <i class="fa-solid fa-code fa-spin fa-4x"></i>
+            </div>
+            <div id="divResult" class="">
+                <div id="map" class="map col-12" style="height: 500px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="next-step-container">
+        <a href="@Url.Action("CompressClassificationOutput", "Detection")" class="next-step-link">
+            Next Step - Compress Classsification Output
+        </a>
+    </div>
+</div>
+
+@section Scripts {
+
+    <script src="/lib/proj4/proj4-src.js"></script>
+    <script src="/lib/ol/ol.js"></script>
+    <script src="/lib/ol/ol-ext.min.js"></script>
+    <script src="/lib/geotiff/geotiff.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/elm-pep@1.0.6/dist/elm-pep.js"></script>
+
+    <script>
+
+        $(function () {
+            ShowResult();
+        });
+
+        function ImageClassifier() {
+            $("#loading").removeClass("d-none");
+
+            let inpImgPath = $("#inpImgPath").val();
+
+            let inpModelPath = $("#inpModelPath").val();
+
+            let inpXmlStatisticsPath = $("#inpXmlStatisticsPath").val();
+
+            let fileData = new FormData();
+            fileData.append("inpImgPath", inpImgPath);
+            fileData.append("inpModelPath", inpModelPath);
+            fileData.append("inpXmlStatisticsPath", inpXmlStatisticsPath);
+
+            $.ajax({
+                url: "@Url.Action("ImageClassifier", "Detection")",
+                type: "POST",
+                contentType: false,
+                processData: false,
+                data: fileData,
+                success: function (data) {
+                    if (data) {
+                        ShowResult(data);
+                    }
+                    else {
+                        swal("error");
+                    }
+                },
+                error: function (req, status, error) {
+                    swal("error");
+                },
+                complete: function () {
+                    $("#loading").addClass("d-none");
+                }
+            });
+        }
+
+        function ShowResult(modelPath) {
+            $("#divResult").removeClass("d-none");
+            var base_url = window.location.origin;
+            const source = new ol.source.GeoTIFF({
+                sources: [
+                    {
+                        url: "/detection/image_classifier/calculated/classification_326eab5a-54d5-4fec-acfa-add74619ed11.tif",
+                    },
+                ],
+            });
+
+            //const confidence = new ol.source.GeoTIFF({
+            //    sources: [
+            //        {
+            //            url: 'C:/Visual Studio Projects/WasteDetection/WasteDetection/wwwroot/detection/image_classifier/calculated/confidence_326eab5a-54d5-4fec-acfa-add74619ed11.tif'
+            //        },
+            //    ],
+            //});
+
+            const map = new ol.Map({
+                target: 'map',
+                layers: [
+                    new ol.layer.Tile({
+                        source: new ol.source.OSM(),
+                    }),
+                    new ol.layer.WebGLTile({
+                        source: source,
+                    }),
+                    //new ol.layer.WebGLTile({
+                    //    source: confidence,
+                    //}),
+                ],
+                view: new ol.View({
+                    center: [2385044, 5154446],
+                    zoom: 10,
+                })
+            });
+        }
+
+    </script>
+
+}

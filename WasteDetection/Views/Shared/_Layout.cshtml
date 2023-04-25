@@ -1,0 +1,95 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>@ViewData["Title"] - WasteDetection</title>
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="description" content="Waste Detection from satellite images">
+    <meta name="keywords" content="app, responsive, jquery, bootstrap, waste, detection, wastedetection, waste detection, waste-detection">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+
+    <!-- Fav Icon -->
+    <link rel="icon" type="image/png" sizes="16x16" href="~/images/ins_logo_only.png" asp-append-version="true">
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/WasteDetection.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/lib/font-awesome/css/all.min.css" asp-append-version="true" />
+
+    @if (IsSectionDefined("Styles"))
+    {
+        @RenderSection("Styles", required: false)
+    }
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-toggleable-lg navbar-dark bg-navbar-gradient border-bottom box-shadow mb-3">
+            <div class="container-fluid">
+                <a class="navbar-brand text-warning" asp-area="" asp-controller="Home" asp-action="Index">
+                    <div class="logo-icons-container float-lg-start">
+                        <i class="fa-solid fa-magnifying-glass looking-glass-logo-icon"></i>
+                        <i class="fa-solid fa-trash-can trash-can-logo-icon"></i>
+                    </div>
+                    <div class="position-relative d-block float-lg-start text-light">
+                        WasteDetection
+                    </div>
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse justify-content-between">
+                    <!-- Menu Pages -->
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Index">
+                                <i class="fa-solid fa-house fa-1x"></i> Home
+                            </a>
+                        </li>
+                        <li>
+                            <a class="nav-link text-light" asp-area="" asp-controller="Map" asp-action="Index">
+                                <i class="fa-regular fa-map fa-1x"></i> Map
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-light" asp-area="" asp-controller="Detection" asp-action="Index">
+                                <i class="fa-solid fa-magnifying-glass fa-1x"></i> Detection
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Licensing">
+                                <i class="fa-brands fa-creative-commons fa-1x"></i> Licensing
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Help">
+                                <i class="fa-solid fa-circle-question fa-1x"></i> Help
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2023 - WasteDetection - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
