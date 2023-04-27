@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WasteDetection.Da;
 
@@ -10,9 +11,11 @@ using WasteDetection.Da;
 namespace WasteDetection.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20230425221720_AddTranslateAndPyramidRequestsTables")]
+    partial class AddTranslateAndPyramidRequestsTables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.5");
@@ -63,31 +66,6 @@ namespace WasteDetection.Migrations
                     b.ToTable("ComputeImageStatisticsRequests");
                 });
 
-            modelBuilder.Entity("WasteDetection.Models.Entities.ContourRequest", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("CreateOn")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("InpLayerPath")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("OutContoursPath")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool>("Suceeded")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ContourRequests");
-                });
-
             modelBuilder.Entity("WasteDetection.Models.Entities.ImageClassificationRequest", b =>
                 {
                     b.Property<Guid>("Id")
@@ -123,85 +101,6 @@ namespace WasteDetection.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("ImageClassificationRequests");
-                });
-
-            modelBuilder.Entity("WasteDetection.Models.Entities.PolygonizeRequest", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("CreateOn")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("InpLayerPath")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("OutVectorizedPath")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool>("Suceeded")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("PolygonizeRequests");
-                });
-
-            modelBuilder.Entity("WasteDetection.Models.Entities.RasterCalculatorRequest", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("CreateOn")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("InpLayerAPath")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("InpLayerBPath")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("OutLayerPath")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool>("Suceeded")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("RasterCalculatorRequests");
-                });
-
-            modelBuilder.Entity("WasteDetection.Models.Entities.SieveRequest", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("CreateOn")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("InpLayerPath")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("OutSievedPath")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool>("Suceeded")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("SieveRequests");
                 });
 
             modelBuilder.Entity("WasteDetection.Models.Entities.TrainImageClassificatierRequest", b =>

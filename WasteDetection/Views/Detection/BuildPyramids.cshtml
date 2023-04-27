@@ -1,0 +1,86 @@
+﻿@{
+    ViewData["Title"] = "Build Pyramids";
+}
+
+<div class="row">
+    <div class="grid-two">
+        <div class="block-card">
+            <h4 class="text-center">
+                Build Pyramids
+            </h4>
+            <hr />
+            <div class="form-group col-md-6 col-sm-12">
+                <label class="form-label">Input Layer full(absolute) file path </label>
+                <input id="inpLayerPath" type="text" class="form-control" />
+            </div>
+            <div class="row d-flex justify-content-end me-md-4 me-sm-1">
+                <button type="button" onclick="BuildPyramids();" class="btn btn-primary col-md-3 col-sm-12">Translate</button>
+            </div>
+        </div>
+        <div class="block-card">
+            <h4 class="text-center">
+                Results
+            </h4>
+            <hr />
+            <div id="loading" class="col-12 h-50 text-center d-none p-4">
+                <i class="fa-solid fa-cubes fa-spin fa-4x"></i>
+            </div>
+            <div id="divResult" class="bg-secondary">
+            </div>
+        </div>
+    </div>
+
+    <div class="next-step-container">
+        <a href="@Url.Action("TranslateLayer", "Detection")" class="next-step-link">
+            Previous Step - Translate Layer
+        </a>
+        <a href="@Url.Action("ComputeImageStatistics", "Detection")" class="next-step-link">
+            Next Step - Compute Image Statistics
+        </a>
+    </div>
+</div>
+
+@section Scripts {
+
+    <script type="text/javascript">
+
+        $(function () {
+        });
+
+        function BuildPyramids() {
+            $("#loading").removeClass("d-none");
+
+            let filePath = $("#inpLayerPath").val();
+
+            let fileData = new FormData();
+            fileData.append("inpLayerPath", filePath);
+
+            $.ajax({
+                url: "@Url.Action("BuildPyramids", "Detection")",
+                type: "POST",
+                contentType: false,
+                processData: false,
+                data: fileData,
+                success: function (data) {
+                    if (data) {
+                        ShowResult(data);
+                    }
+                    else {
+                        swal("error");
+                    }
+                },
+                error: function (req, status, error) {
+                    swal("error");
+                },
+                complete: function () {
+                    $("#loading").addClass("d-none");
+                }
+            });
+        }
+
+        function ShowResult(data) {
+            alert(data);
+        }
+
+    </script>
+}

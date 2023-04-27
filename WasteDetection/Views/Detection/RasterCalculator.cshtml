@@ -1,0 +1,98 @@
+﻿@{
+    ViewData["Title"] = "Raster Calculator";
+}
+
+@section Styles{
+    <link rel="stylesheet" href="/css/ol/ol.css">
+    <link rel="stylesheet" href="/css/ol/ol-ext.min.css">
+}
+
+<div class="row">
+    <h4 class="text-center">
+        Raster Calculator
+    </h4>
+    <div class="grid-two mt-4">
+        <div class="block-card form-group">
+            <label class="form-label">Input Layer A full(absolute) file path (.png, .tif, .tiff)</label>
+            <input id="inpLayerAPath" type="text" class="form-control" placeholder="C:\data\1to10\1to10.tif" />
+        </div>
+        <div class="block-card form-group">
+            <label class="form-label">Input Layer B full(absolute) file path (.png, .tif, .tiff)</label>
+            <input id="inpLayerBPath" type="text" class="form-control" placeholder="C:\data\1to10\1to10.tif" />
+        </div>
+    </div>
+    <div class="row justify-content-center mt-4">
+        <button type="button" onclick="RasterCalculator();" class="btn btn-primary col-md-3 col-sm-6">Calculate</button>
+    </div>
+
+    <div class="row justify-content-center mt-4">
+        <div class="block-card">
+            <h4 class="text-center">
+                Results
+            </h4>
+            <hr />
+            <div id="loading" class="col-12 h-50 text-center d-none p-4">
+                <i class="fa-solid fa-calculator fa-spin fa-4x"></i>
+            </div>
+            <div id="divResult" class="">
+                <div id="map" class="map col-12" style="height: 500px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="next-step-container">
+        <a href="@Url.Action("ImageClassifier", "Detection")" class="next-step-link">
+            Previous Step - Image Classifiaction
+        </a>
+        <a href="@Url.Action("Sieve", "Detection")" class="next-step-link">
+            Next Step - Sieve
+        </a>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(function () {
+        });
+
+        function RasterCalculator() {
+            $("#loading").removeClass("d-none");
+
+            let inpLayerAPath = $("#inpLayerAPath").val();
+
+            let inpLayerBPath = $("#inpLayerBPath").val();
+
+            let fileData = new FormData();
+            fileData.append("inpLayerAPath", inpLayerAPath);
+            fileData.append("inpLayerBPath", inpLayerBPath);
+
+            $.ajax({
+                url: "@Url.Action("RasterCalculator", "Detection")",
+                type: "POST",
+                contentType: false,
+                processData: false,
+                data: fileData,
+                success: function (data) {
+                    if (data) {
+                        ShowResult(data);
+                    }
+                    else {
+                        swal("error");
+                    }
+                },
+                error: function (req, status, error) {
+                    swal("error");
+                },
+                complete: function () {
+                    $("#loading").addClass("d-none");
+                }
+            });
+        }
+
+        function ShowResult(data) {
+            alert(data);
+        }
+
+    </script>
+
+}

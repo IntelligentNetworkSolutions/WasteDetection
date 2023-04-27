@@ -1,0 +1,74 @@
+﻿@{
+    ViewData["Title"] = "Steps";
+}
+
+<div class="row">
+    <h4 class="text-center"></h4>
+    <div class="grid-two mt-4 text-center">
+        <div class="block-card">
+            <h4 class="fw-bold">
+                Translate Layer
+            </h4>
+            <a href="@Url.Action("TranslateLayer", "Detection")" class="btn btn-outline-primary">
+                Translate <i class="fa-solid fa-language fa-1x"></i>
+            </a>
+        </div>
+        <div class="block-card">
+            <h4 class="fw-bold">
+                Build Pyramids
+            </h4>
+            <a href="@Url.Action("BuildPyramids", "Detection")" class="btn btn-outline-primary">
+                Build <i class="fa-solid fa-cubes fa-1x"></i>
+            </a>
+        </div>
+        <div class="block-card">
+            <h4 class="fw-bold">
+                Compute Image Statistics
+            </h4>
+            <a href="@Url.Action("ComputeImageStatistics", "Detection")" class="btn btn-outline-primary">
+                Compute <i class="fa-solid fa-code fa-1x"></i>
+            </a>
+        </div>
+        <div class="block-card">
+            <h4 class="fw-bold">
+                Train Image Classifier
+            </h4>
+            <a href="@Url.Action("TrainImageClassifier", "Detection")" class="btn btn-outline-primary">
+                Train <i class="fa-solid fa-dumbbell fa-1x"></i>
+            </a>
+        </div>
+        <div class="block-card">
+            <h4 class="fw-bold">
+                Image Classifier
+            </h4>
+            <a href="@Url.Action("ImageClassifier", "Detection")" class="btn btn-outline-primary">
+                Classify <i class="fa-solid fa-crosshairs fa-1x"></i>
+            </a>
+        </div>
+        
+        <div class="block-card">
+            <h4 class="fw-bold">
+                Raster Calculator
+            </h4>
+            <a href="@Url.Action("RasterCalculator", "Detection")" class="btn btn-outline-primary">
+                Calculate <i class="fa-solid fa-calculator fa-1x"></i>
+            </a>
+        </div>
+        <div class="block-card">
+            <h4 class="fw-bold">
+                Sieve
+            </h4>
+            <a href="@Url.Action("Sieve", "Detection")" class="btn btn-outline-primary">
+                Sieve <i class="fa-solid fa-users-viewfinder fa-1x"></i>
+            </a>
+        </div>
+        <div class="block-card">
+            <h4 class="fw-bold">
+                Contour
+            </h4>
+            <a href="@Url.Action("Contour", "Detection")" class="btn btn-outline-primary">
+                Contour <<i class="fa-solid fa-draw-polygon fa-1x"></i>
+            </a>
+        </div>
+    </div>
+</div>

@@ -100,12 +100,18 @@ body {
     grid-gap: 2em;
 }
 
+.grid-three {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 1em;
+}
+
 .block-card {
     color: var(--main-color);
     background: var(--block-bg-color);
     border: 0.3em inset var(--ternary-color);
     border-radius: 0.8em 0.8em;
-    padding: 2em;
+    padding: 1em;
 }
 
 .next-step-container {

@@ -23,7 +23,7 @@ namespace WasteDetection.Services
             string originalFileName = inpImgPath;
             string originalExtension = System.IO.Path.GetExtension(inpImgPath);
 
-            string outXmlPathBase = _settingsService.GetOutBasePathByToolName("ComputeImageStatistics");
+            string outXmlPathBase = _settingsService.GetOutBasePathByOrfeoToolboxToolName("ComputeImageStatistics");
             string outXmlPath = Path.Combine(outXmlPathBase, Guid.NewGuid() + ".xml");
 
             // Not for now, pointless
@@ -46,7 +46,7 @@ namespace WasteDetection.Services
             if (resultAdd <= 0)
                 throw new Exception("ComputeImageStatisticsRequest Not Inserted");
 
-            string scriptName = _settingsService.GetScriptNameByToolName("ComputeImageStatistics");
+            string scriptName = _settingsService.GetScriptNameByOrfeoToolboxToolName("ComputeImageStatistics");
             string absoluteOutXmlPath = Path.Join(Environment.CurrentDirectory, "wwwroot", request.OutXmlPath);
             if (!Directory.Exists(Path.Join(Environment.CurrentDirectory, "wwwroot", outXmlPathBase)))
                 Directory.CreateDirectory(Path.Join(Environment.CurrentDirectory, "wwwroot", outXmlPathBase));
@@ -86,8 +86,8 @@ namespace WasteDetection.Services
             if (request is null)
                 throw new ArgumentNullException(nameof(request));
             
-            string scriptName = _settingsService.GetScriptNameByToolName("TrainImageClassifier");
-            string outBasePath = _settingsService.GetOutBasePathByToolName("TrainImageClassifier");
+            string scriptName = _settingsService.GetScriptNameByOrfeoToolboxToolName("TrainImageClassifier");
+            string outBasePath = _settingsService.GetOutBasePathByOrfeoToolboxToolName("TrainImageClassifier");
             if (!Directory.Exists(Path.Join(Environment.CurrentDirectory, "wwwroot", outBasePath)))
                 Directory.CreateDirectory(Path.Join(Environment.CurrentDirectory, "wwwroot", outBasePath));
 
@@ -99,7 +99,7 @@ namespace WasteDetection.Services
 
             request.OutModelPath = Path.Join(outBasePath, "model_" + outputGuid + ".mdl"); ;
             request.OutConfusionMatrixPath = Path.Join(outBasePath, "confm_" + outputGuid + ".xml");
-            request.TrainingClassifierName = "rf";
+            request.TrainingClassifierName = request.TrainingClassifierName ?? "rf";
             request.LabelField = request.LabelField ?? "class";
 
             _dataContext.TrainImageClassificatierRequests.Add(request);
@@ -154,8 +154,8 @@ namespace WasteDetection.Services
             if (request is null)
                 throw new ArgumentNullException(nameof(request));
 
-            string scriptName = _settingsService.GetScriptNameByToolName("ImageClassifier");
-            string outBasePath = _settingsService.GetOutBasePathByToolName("ImageClassifier");
+            string scriptName = _settingsService.GetScriptNameByOrfeoToolboxToolName("ImageClassifier");
+            string outBasePath = _settingsService.GetOutBasePathByOrfeoToolboxToolName("ImageClassifier");
             if (!Directory.Exists(Path.Join(Environment.CurrentDirectory, "wwwroot", outBasePath)))
                 Directory.CreateDirectory(Path.Join(Environment.CurrentDirectory, "wwwroot", outBasePath));
 
@@ -211,7 +211,7 @@ namespace WasteDetection.Services
             // it will eventually get killed by forceful cancellation configured above.
             gracefulCts.CancelAfter(TimeSpan.FromSeconds(180));
 
-            string? orfeoToolboxPath = _settingsService.GetOrfeoToolboxPath();
+            string? orfeoToolboxPath = _settingsService.GetOrfeoToolboxToolsPath();
 
             string targetProgram = Path.Combine(orfeoToolboxPath, scriptName);
 
@@ -221,7 +221,8 @@ namespace WasteDetection.Services
                     .WithArguments(commandArguments)
                     .WithValidation(CommandResultValidation.None)
                     .WithStandardErrorPipe(PipeTarget.ToFile("C:\\Logs\\WasteDetection\\ErrorLogCliWrap.txt"))
-                    .ExecuteAsync(forcefulCts.Token, gracefulCts.Token);
+                    .ExecuteAsync();
+            //.ExecuteAsync(forcefulCts.Token, gracefulCts.Token);
 
             if (commandTask is null)
                 throw new Exception("Unable to get Configured Cli Command Task");

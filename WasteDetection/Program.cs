@@ -8,8 +8,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<DataContext>(options => 
     options.UseSqlite(builder.Configuration.GetConnectionString("LocalDatabase")));
-builder.Services.AddTransient<SettingsService>();
-builder.Services.AddTransient<OrfeoToolboxToolsService>();
+builder.Services.AddScoped<SettingsService>();
+builder.Services.AddScoped<OrfeoToolboxToolsService>();
+builder.Services.AddScoped<GDALToolsService>();
 
 var app = builder.Build();
 

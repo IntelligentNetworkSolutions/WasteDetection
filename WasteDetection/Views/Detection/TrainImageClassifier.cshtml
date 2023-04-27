@@ -35,7 +35,7 @@
             </h4>
             <hr />
             <div id="loading" class="col-12 h-50 text-center d-none p-4">
-                <i class="fa-solid fa-code fa-spin fa-4x"></i>
+                <i class="fa-solid fa-dumbbell fa-spin fa-4x"></i>
             </div>
             <div id="divResult" class="grid-two">
                 <div class="text-center">
@@ -60,6 +60,9 @@
         </div>
     </div>
     <div class="next-step-container">
+        <a href="@Url.Action("ComputeImageStatistics", "Detection")" class="next-step-link">
+            Previous Step - Compute Image Statistics
+        </a>
         <a href="@Url.Action("ImageClassifier", "Detection")" class="next-step-link">
             Next Step - Image Classifiaction
         </a>

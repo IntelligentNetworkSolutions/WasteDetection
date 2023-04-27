@@ -5,10 +5,12 @@
 @section Styles{
     <link rel="stylesheet" href="/css/ol/ol.css">
     <link rel="stylesheet" href="/css/ol/ol-ext.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/ol-layerswitcher@4.1.1/dist/ol-layerswitcher.css" />
 }
 
 <div class="row">
     <div id="map" class="map" style="width: 500px; height: 500px;"></div>
+    <div id="info">&nbsp;</div>
 </div>
 
 @section Scripts {
@@ -17,35 +19,102 @@
     <script src="/lib/ol/ol-ext.min.js"></script>
     <script src="/lib/geotiff/geotiff.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/elm-pep@1.0.6/dist/elm-pep.js"></script>
+    <script src="https://unpkg.com/ol-layerswitcher@4.1.1"></script>
 
     <script>
         $(function(){
-            const source = new ol.source.GeoTIFF({
-                sources: [
-                    {
-                        //url: '/images/1to10.tif',
-                        url: '/detection/prepared_inputs/1to10_gdal_rendered.tif',
-                    },
-                ],
+
+            const inputRasterLayer = new ol.layer.WebGLTile({
+                title: 'input_image',
+                type: 'base',
+                visible: true,
+                source: new ol.source.GeoTIFF({
+                    sources: [
+                        {
+                            url: '/detection/prepared_inputs/1to10_gdal_rendered.tif',
+                        },
+                    ],
+                }),
             });
 
-            const map = new ol.Map({
+            const inputTrainingVectorLayer = new ol.layer.Vector({
+                title: 'training_vector',
+                visible: true,
+                source: new ol.source.Vector({
+                    projection: 'EPSG:3857',
+                    url: '/detection/prepared_inputs/training_layers/training_classes.json',
+                    format: new ol.format.GeoJSON({ dataProjection: 'EPSG:3857' }),
+                }),
+                style: new ol.style.Style({
+                    fill: new ol.style.Fill({
+                        color: 'blue',
+                    }),
+                }),
+            });
+
+            const inputValidationVectorLayer = new ol.layer.Vector({
+                title: 'validation_vector',
+                visible: true,
+                source: new ol.source.Vector({
+                    projection: 'EPSG:3857',
+                    url: '/detection/prepared_inputs/control_layers/control_classes.json',
+                    format: new ol.format.GeoJSON({ dataProjection: 'EPSG:3857' }),
+                }),
+                style: new ol.style.Style({
+                    fill: new ol.style.Fill({
+                        color: 'midnightblue',
+                    }),
+                }),
+            });
+
+            const outputVectorizedLayer = new ol.layer.Vector({
+                title: 'vectorized_result',
+                //type: 'base',
+                visible: true,
+                source: new ol.source.Vector({
+                    projection: 'EPSG:3857',
+                    url: '/detection/polygonize/latest_correct.json',
+                    format: new ol.format.GeoJSON({ dataProjection: 'EPSG:3857' }),
+                }),
+                style: new ol.style.Style({
+                    fill: new ol.style.Fill({
+                        color: 'red',
+                    }),
+                }),
+            });
+
+            const osm = new ol.layer.Tile({
+                title: 'osm',
+                type: 'base',
+                visible: true,
+                source: new ol.source.OSM(),
+            });
+
+            const baseMaps = new ol.layer.Group({
+                title: 'Base maps',
+                layers: [osm, inputRasterLayer]
+            });
+
+            window.map = new ol.Map({
                 target: 'map',
                 layers: [
-                    new ol.layer.Tile({
-                        source: new ol.source.OSM(),
-                    }),
-                    new ol.layer.WebGLTile({
-                        source: source,
-                    }),
-                    
+                    baseMaps,
+                    inputTrainingVectorLayer,
+                    inputValidationVectorLayer,
+                    outputVectorizedLayer
                 ],
                 view: new ol.View({
                     center: [2385044,5154446],
                     zoom: 10,
                 })
-                //view: source.getView(),
             });
+
+            const layerSwitcher = new ol.control.LayerSwitcher({
+                reverse: true,
+                groupSelectStyle: 'group'
+            });
+
+            map.addControl(layerSwitcher);
         });
         
     </script>

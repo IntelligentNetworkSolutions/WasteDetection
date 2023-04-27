@@ -36,7 +36,7 @@
             </h4>
             <hr />
             <div id="loading" class="col-12 h-50 text-center d-none p-4">
-                <i class="fa-solid fa-code fa-spin fa-4x"></i>
+                <i class="fa-solid fa-crosshairs fa-spin fa-4x"></i>
             </div>
             <div id="divResult" class="">
                 <div id="map" class="map col-12" style="height: 500px;"></div>
@@ -45,8 +45,11 @@
     </div>
 
     <div class="next-step-container">
-        <a href="@Url.Action("CompressClassificationOutput", "Detection")" class="next-step-link">
-            Next Step - Compress Classsification Output
+        <a href="@Url.Action("TrainImageClassifier", "Detection")" class="next-step-link">
+            Previous Step - Train Image Classifier
+        </a>
+        <a href="@Url.Action("RasterCalculator", "Detection")" class="next-step-link">
+            Next Step - Raster Calculator
         </a>
     </div>
 </div>
@@ -62,7 +65,7 @@
     <script>
 
         $(function () {
-            ShowResult();
+            //ShowResultMap();
         });
 
         function ImageClassifier() {
@@ -88,6 +91,7 @@
                 success: function (data) {
                     if (data) {
                         ShowResult(data);
+                        //ShowResultMap(data);
                     }
                     else {
                         swal("error");
@@ -102,37 +106,50 @@
             });
         }
 
-        function ShowResult(modelPath) {
+        function ShowResult(data){
+            if(!(data))
+                swal('error');
+
+            if()
+        }
+
+        function ShowResultMap(modelPath) {
             $("#divResult").removeClass("d-none");
             var base_url = window.location.origin;
-            const source = new ol.source.GeoTIFF({
-                sources: [
-                    {
-                        url: "/detection/image_classifier/calculated/classification_326eab5a-54d5-4fec-acfa-add74619ed11.tif",
-                    },
-                ],
-            });
 
-            //const confidence = new ol.source.GeoTIFF({
-            //    sources: [
-            //        {
-            //            url: 'C:/Visual Studio Projects/WasteDetection/WasteDetection/wwwroot/detection/image_classifier/calculated/confidence_326eab5a-54d5-4fec-acfa-add74619ed11.tif'
-            //        },
-            //    ],
-            //});
+            const classificationResultLayer =
+                new ol.layer.WebGLTile({
+                    title: "classification",
+                    source: new ol.source.GeoTIFF({
+                        sources: [
+                            {
+                                url: "/detection/image_classifier/calculated/classification_326eab5a-54d5-4fec-acfa-add74619ed11.tif",
+                            },
+                        ],
+                    })
+                });
+
+            const confidenceMapResultLayer =
+                new ol.layer.WebGLTile({
+                    title: "confidence",
+                    source: new ol.source.GeoTIFF({
+                        sources: [
+                            {
+                                url: "/detection/image_classifier/calculated/confidence_326eab5a-54d5-4fec-acfa-add74619ed11.tif",
+                            },
+                        ],
+                    })
+                });
 
             const map = new ol.Map({
                 target: 'map',
                 layers: [
                     new ol.layer.Tile({
+                        title: "OSM",
                         source: new ol.source.OSM(),
                     }),
-                    new ol.layer.WebGLTile({
-                        source: source,
-                    }),
-                    //new ol.layer.WebGLTile({
-                    //    source: confidence,
-                    //}),
+                    classificationResultLayer,
+                    confidenceMapResultLayer
                 ],
                 view: new ol.View({
                     center: [2385044, 5154446],

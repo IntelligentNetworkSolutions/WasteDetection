@@ -9,7 +9,8 @@
             _configuration = configuration;
         }
 
-        public string GetOrfeoToolboxPath()
+        #region Orfeo Toolbox
+        public string GetOrfeoToolboxToolsPath()
         {
             string? orfeoToolboxPath = _configuration.GetValue<string>("OrfeoToolboxPath");
 
@@ -29,7 +30,7 @@
             return ramArgument;
         }
 
-        public string GetScriptNameByToolName(string toolName)
+        public string GetScriptNameByOrfeoToolboxToolName(string toolName)
         {
             string? scriptName = _configuration.GetValue<string>($"OrfeoToolBoxTools:{toolName}:ScriptName");
 
@@ -39,7 +40,7 @@
             return scriptName;
         }
 
-        public string GetOutBasePathByToolName(string toolName)
+        public string GetOutBasePathByOrfeoToolboxToolName(string toolName)
         {
             string? outBasePath = _configuration.GetValue<string>($"OrfeoToolBoxTools:{toolName}:OutBasePath");
 
@@ -48,5 +49,49 @@
 
             return outBasePath;
         }
-    }   
+        #endregion
+
+
+        #region GDAL
+        public string GetGDALToolsExesPath()
+        {
+            string? gdalToolsPath = _configuration.GetValue<string>("GDALToolsExesPath");
+
+            if (string.IsNullOrEmpty(gdalToolsPath))
+                throw new Exception("GDAL Tools .exe's Path Not Found");
+
+            return gdalToolsPath;
+        }
+
+        public string GetGDALToolsBatsPath()
+        {
+            string? gdalToolsPath = _configuration.GetValue<string>("GDALToolsBatsPath");
+
+            if (string.IsNullOrEmpty(gdalToolsPath))
+                throw new Exception("GDAL Tools .bat's Path Not Found");
+
+            return gdalToolsPath;
+        }
+
+        public string GetScriptNameByGDALToolName(string toolName)
+        {
+            string? scriptName = _configuration.GetValue<string>($"GDALTools:{toolName}:ScriptName");
+
+            if (string.IsNullOrEmpty(scriptName))
+                throw new Exception("ScriptName Not Found");
+
+            return scriptName;
+        }
+
+        public string GetOutBasePathByGDALToolName(string toolName)
+        {
+            string? outBasePath = _configuration.GetValue<string>($"GDALTools:{toolName}:OutBasePath");
+
+            if (string.IsNullOrEmpty(outBasePath))
+                throw new Exception("OutBasePath Not Found");
+
+            return outBasePath;
+        }
+        #endregion
+    }
 }
