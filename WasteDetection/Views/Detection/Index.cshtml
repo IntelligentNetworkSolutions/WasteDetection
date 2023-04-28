@@ -1,10 +1,11 @@
 ﻿@{
+    ViewData["Title"] = "Detection";
 }
 
 <div class="row">
     <h4 class="text-center"></h4>
     <div class="grid-two mt-4">
-        <div class="block-card">
+        <div class="block-card grid-span-two">
             <h4>
                 Full Process
             </h4>
@@ -12,11 +13,11 @@
                 <label class="form-label">Input the path to the downloaded image (Download Image step) </label>
                 <input id="inpLayerPath" type="text" class="form-control" />
             </div>
-            <a href="@Url.Action("InputImagePath", "Detection")" class="btn btn-outline-primary mt-3">
+            <a href="@Url.Action("InputImagePath", "Detection")" class="btn btn-outline-primary mt-3 text-end fa-pull-right">
                 Start Process <i class="fa-solid fa-microchip fa-1x"></i>
             </a>
         </div>
-        <div class="block-card">
+        <div class="block-card grid-span-two">
             <h4>
                 Results
             </h4>
@@ -26,118 +27,6 @@
             </div>
             <div id="divResult" class="bg-secondary">
             </div>
-        </div>
-    </div>
-    <div class="grid-three mt-4 text-center">
-        <div class="block-card">
-            <h4>
-                Step 1
-            </h4>
-            <h4 class="fw-bold mt-2">
-                Download Input Image
-            </h4>
-            <a href="@Url.Action("DownloadImage", "Detection")" class="btn btn-outline-primary mt-3">
-                Download <i class="fa-solid fa-download fa-1x"></i>
-            </a>
-        </div>
-        <div class="block-card">
-            <h4>
-                Step 1
-            </h4>
-            <h4 class="fw-bold mt-2">
-                Download Input Image
-            </h4>
-            <a href="@Url.Action("DownloadImage", "Detection")" class="btn btn-outline-primary mt-3">
-                Download <i class="fa-solid fa-download fa-1x"></i>
-            </a>
-        </div>
-        @*<div class="block-card">
-            <h4>
-                Step 2
-            </h4>
-            <h4 class="fw-bold mt-2">
-                Translate Layer
-            </h4>
-            <a href="@Url.Action("TranslateLayer", "Detection")" class="btn btn-outline-primary mt-3">
-                Translate <i class="fa-solid fa-language fa-1x"></i>
-            </a>
-        </div>
-        <div class="block-card">
-            <h4>
-                Step 3
-            </h4>
-            <h4 class="fw-bold mt-2">
-                Build Pyramids
-            </h4>
-            <a href="@Url.Action("BuildPyramids", "Detection")" class="btn btn-outline-primary mt-3">
-                Build <i class="fa-solid fa-cubes fa-1x"></i>
-            </a>
-        </div>*@
-        <div class="block-card">
-            <h4>
-                Step 4
-            </h4>
-            <h4 class="fw-bold mt-2">
-                Compute Image Statistics
-            </h4>
-            <a href="@Url.Action("ComputeImageStatistics", "Detection")" class="btn btn-outline-primary mt-3">
-                Compute <i class="fa-solid fa-code fa-1x"></i>
-            </a>
-        </div>
-        <div class="block-card">
-            <h4>
-                Step 5
-            </h4>
-            <h4 class="fw-bold mt-2">
-                Train Image Classifier
-            </h4>
-            <a href="@Url.Action("TrainImageClassifier", "Detection")" class="btn btn-outline-primary mt-3">
-                Train <i class="fa-solid fa-dumbbell fa-1x"></i>
-            </a>
-        </div>
-        <div class="block-card">
-            <h4>
-                Step 6
-            </h4>
-            <h4 class="fw-bold mt-2">
-                Image Classifier
-            </h4>
-            <a href="@Url.Action("ImageClassifier", "Detection")" class="btn btn-outline-primary mt-3">
-                Classify <i class="fa-solid fa-crosshairs fa-1x"></i>
-            </a>
-        </div>
-        <div class="block-card">
-            <h4>
-                Step 7
-            </h4>
-            <h4 class="fw-bold mt-2">
-                Raster Calculator
-            </h4>
-            <a href="@Url.Action("RasterCalculator", "Detection")" class="btn btn-outline-primary mt-3">
-                Calculate <i class="fa-solid fa-calculator fa-1x"></i>
-            </a>
-        </div>
-        <div class="block-card">
-            <h4>
-                Step 8
-            </h4>
-            <h4 class="fw-bold mt-2">
-                Sieve
-            </h4>
-            <a href="@Url.Action("Sieve", "Detection")" class="btn btn-outline-primary mt-3">
-                Sieve <i class="fa-solid fa-users-viewfinder fa-1x"></i>
-            </a>
-        </div>
-        <div class="block-card">
-            <h4>
-                Step 9
-            </h4>
-            <h4 class="fw-bold mt-2">
-                Contour
-            </h4>
-            <a href="@Url.Action("Contour", "Detection")" class="btn btn-outline-primary mt-3">
-                Contour <<i class="fa-solid fa-draw-polygon fa-1x"></i>
-            </a>
         </div>
     </div>
 </div>

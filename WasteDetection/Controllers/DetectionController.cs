@@ -131,7 +131,7 @@ namespace WasteDetection.Controllers
         }
 
         [HttpPost]
-        public async Task<(string, string)> ImageClassifier(string inpImgPath, string inpModelPath, string inpXmlStatisticsPath)
+        public async Task<string> ImageClassifier(string inpImgPath, string inpModelPath, string inpXmlStatisticsPath)
         {
             if (string.IsNullOrEmpty(inpImgPath))
                 throw new ArgumentNullException(nameof(inpImgPath));
@@ -150,9 +150,10 @@ namespace WasteDetection.Controllers
                 InpXmlStatisticsPath = inpXmlStatisticsPath,
             };
 
-            (string raster, string confidenceMap) = await _orfeoToolboxToolsService.ImageClassification(request);
+            (string rasterRelPath, string rasterAbsPath, string confidenceMapRelPath, string confidenceMapAbsPath) = 
+                await _orfeoToolboxToolsService.ImageClassification(request);
 
-            return (raster, confidenceMap);
+            return rasterRelPath + "---" + rasterAbsPath + "---" + confidenceMapRelPath + "---" + confidenceMapAbsPath;
         }
         #endregion
 
@@ -172,9 +173,9 @@ namespace WasteDetection.Controllers
             if (string.IsNullOrEmpty(inpLayerBPath))
                 throw new ArgumentNullException(nameof(inpLayerBPath));
 
-            string resultFilePath = await _GDALToolsService.RasterCalculator(inpLayerAPath, inpLayerBPath);
+            (string resultFileRelPath, string resultFileAbsPath) = await _GDALToolsService.RasterCalculator(inpLayerAPath, inpLayerBPath);
 
-            return resultFilePath;
+            return resultFileRelPath + "---" + resultFileAbsPath;
         }
         #endregion
 
@@ -191,9 +192,9 @@ namespace WasteDetection.Controllers
             if (string.IsNullOrEmpty(inpLayerPath))
                 throw new ArgumentNullException(nameof(inpLayerPath));
 
-            string resultFilePath = await _GDALToolsService.Sieve(inpLayerPath);
+            (string resultFileRelativePath, string resultFileAbsolutePath) = await _GDALToolsService.Sieve(inpLayerPath);
 
-            return resultFilePath;
+            return resultFileRelativePath + "---" + resultFileAbsolutePath;
         }
         #endregion
 
@@ -237,8 +238,7 @@ namespace WasteDetection.Controllers
 
         public async Task<string> OneForAllForOne(string inpImgPath)
         {
-            string inpImgAbsPath = "";
-            inpImgPath = "C:\\Visual Studio Projects\\WasteDetection\\WasteDetection\\wwwroot\\detection\\prepared_inputs\\1to10.tif";
+            //inpImgPath = "C:\\Visual Studio Projects\\WasteDetection\\WasteDetection\\wwwroot\\detection\\prepared_inputs\\1to10.tif";
 
             string transaltedInpImgAbsPath = await _GDALToolsService.TranslateLayer(inpImgPath);
 
@@ -271,14 +271,13 @@ namespace WasteDetection.Controllers
                 Suceeded= false,
             };
 
-            string outRasterAbsPath;
-            string outConfidenceMapAbsPath;
-            (outRasterAbsPath, outConfidenceMapAbsPath) =
+            (string outRasterRelPath, string outRasterAbsPath, string outConfidenceMapRelPath, string outConfidenceMapAbsPath) =
                 await _orfeoToolboxToolsService.ImageClassification(imageClassificationRequest);
 
-            string outRasterCalculatorAbsPath = await _GDALToolsService.RasterCalculator(outRasterAbsPath, outConfidenceMapAbsPath);
+            (string outRasterCalculatorRelPath, string outRasterCalculatorAbsPath) =
+                await _GDALToolsService.RasterCalculator(outRasterAbsPath, outConfidenceMapAbsPath);
 
-            string outSieveAbsPath = await _GDALToolsService.Sieve(outRasterCalculatorAbsPath);
+            (string outSieverelPath, string outSieveAbsPath) = await _GDALToolsService.Sieve(outRasterCalculatorAbsPath);
 
             string outPolygonizeAbsPath = await _GDALToolsService.Polygonize(outSieveAbsPath);
             return "OK";

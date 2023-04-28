@@ -132,7 +132,7 @@ namespace WasteDetection.Services
             return inpLayerPath;
         }
 
-        public async Task<string> RasterCalculator(string inpLayerAPath, string inpLayerBPath)
+        public async Task<(string, string)> RasterCalculator(string inpLayerAPath, string inpLayerBPath)
         {
             //gdal_calc.bat --overwrite --calc "where(((B > 0.9) & (isin(A, [1, 7]))), 1, 0)" --format GTiff --type UInt16 -A "C:/Visual Studio Projects/WasteDetection/WasteDetection/wwwroot/detection/image_classifier/calculated/classification_326eab5a-54d5-4fec-acfa-add74619ed11.tif" --A_band 1 -B "C:/Visual Studio Projects/WasteDetection/WasteDetection/wwwroot/detection/image_classifier/calculated/confidence_326eab5a-54d5-4fec-acfa-add74619ed11.tif" --B_band 1 --co COMPRESS=DEFLATE --co PREDICTOR=2 --co ZLEVEL=9 --co TILED=YES --co NUM_THREADS=ALL_CPUS --outfile "C:/Work Projects/WasteDetection/output/train_image_classifier_single_img/1to10/igorche_traning/calculator/final_calculator.tif"
             if (string.IsNullOrEmpty(inpLayerAPath))
@@ -200,10 +200,10 @@ namespace WasteDetection.Services
             requestFromDb.Suceeded = true;
             int resultUpdate = await _dataContext.SaveChangesAsync();
 
-            return requestFromDb.OutLayerPath;
+            return (requestFromDb.OutLayerPath, absoluteOutRasterPath);
         }
 
-        public async Task<string> Sieve(string inpLayerPath)
+        public async Task<(string, string)> Sieve(string inpLayerPath)
         {
             // gdal_sieve.bat -st 3 -4 -nomask -of GTiff D:/DeponiiBodanRezultat/pajtonashi.tif D:/DeponiiBodanRezultat/sieve_3x3.tif
             if (string.IsNullOrEmpty(inpLayerPath))
@@ -264,7 +264,7 @@ namespace WasteDetection.Services
             requestFromDb.Suceeded = true;
             int resultUpdate = await _dataContext.SaveChangesAsync();
 
-            return absoluteOutSievedPath;
+            return (relativeOutSievedPath, absoluteOutSievedPath);
         }
 
         public async Task<string> Contour(string inpLayerPath)
@@ -403,13 +403,8 @@ namespace WasteDetection.Services
             using CancellationTokenSource forcefulCts = new CancellationTokenSource();
             using CancellationTokenSource gracefulCts = new CancellationTokenSource();
 
-            // Cancel forcefully after a timeout of 10 seconds
-            forcefulCts.CancelAfter(TimeSpan.FromHours(6));
-
-            // Cancel gracefully after a timeout of 180 seconds.
-            // If the process takes too long to respond to graceful cancellation,
-            // it will eventually get killed by forceful cancellation configured above.
-            gracefulCts.CancelAfter(TimeSpan.FromHours(4));
+            forcefulCts.CancelAfter(TimeSpan.FromHours(4));
+            gracefulCts.CancelAfter(TimeSpan.FromHours(2));
 
             string? gdalToolsExesPath = _settingsService.GetGDALToolsExesPath();
             string workingDirectory = Environment.CurrentDirectory;

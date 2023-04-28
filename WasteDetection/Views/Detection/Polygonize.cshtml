@@ -1,0 +1,149 @@
+﻿@{
+    ViewData["Title"] = "Polygonize";
+}
+
+<div class="row">
+    <div class="grid-two">
+        <div class="block-card">
+            <h4 class="text-center">
+                Polygonize
+            </h4>
+            <hr />
+            <div class="form-group col-md-6 col-sm-12">
+                <label class="form-label">Input Layer full(absolute) file path </label>
+                <input id="inpLayerPath" type="text" class="form-control" />
+            </div>
+            <div class="row d-flex justify-content-end me-md-4 me-sm-1">
+                <button type="button" onclick="Polygonize();" class="btn btn-primary col-md-3 col-sm-12">Polygonize</button>
+            </div>
+        </div>
+        <div class="block-card">
+            <h4 class="text-center">
+                Results
+            </h4>
+            <hr />
+            <div id="loading" class="col-12 h-50 text-center d-none p-4">
+                <i class="fa-solid fa-draw-polygon fa-spin fa-4x"></i>
+            </div>
+            <div id="divResult" class="bg-secondary">
+            </div>
+        </div>
+    </div>
+
+    <div class="next-step-container">
+        <a href="@Url.Action("Index", "Map")" class="next-step-link">
+            Map
+        </a>
+    </div>
+</div>
+
+@section Scripts {
+
+    <script type="text/javascript">
+
+        
+
+        function Polygonize() {
+            $("#loading").removeClass("d-none");
+
+            let filePath = $("#inpLayerPath").val();
+            inputRasterPath = filePath;
+            let fileData = new FormData();
+            fileData.append("inpLayerPath", filePath);
+
+            $.ajax({
+                url: "@Url.Action("Polygonize", "Detection")",
+                type: "POST",
+                contentType: false,
+                processData: false,
+                data: fileData,
+                success: function (data) {
+                    if (data) {
+                        outputVectorLayerPath = data;
+                        ShowResult(data);
+                    }
+                    else {
+                        swal("error");
+                    }
+                },
+                error: function (req, status, error) {
+                    swal("error");
+                },
+                complete: function () {
+                    $("#loading").addClass("d-none");
+                }
+            });
+        }
+
+        function ShowResult(data) {
+            alert(data);
+        }
+
+        var inputRasterPath = null;
+        var outputVectorLayerPath = null;
+
+        $(function () {
+
+            const inputRasterLayer = new ol.layer.WebGLTile({
+                title: 'input_image',
+                type: 'base',
+                visible: true,
+                source: new ol.source.GeoTIFF({
+                    sources: [
+                        {
+                            url: '/detection/prepared_inputs/1to10_gdal_rendered.tif',
+                        },
+                    ],
+                }),
+            });
+
+            outputVectorLayerPath = '/detection/prepared_inputs/polygonize/latest_correct.json';
+            const outputVectorizedLayer = new ol.layer.Vector({
+                title: 'output_vectorized_result',
+                visible: true,
+                source: new ol.source.Vector({
+                    projection: 'EPSG:3857',
+                    url: outputVectorLayerPath,
+                    format: new ol.format.GeoJSON({ dataProjection: 'EPSG:3857' }),
+                }),
+                style: new ol.style.Style({
+                    fill: new ol.style.Fill({
+                        color: 'red',
+                    }),
+                }),
+            });
+
+            const osm = new ol.layer.Tile({
+                title: 'osm',
+                type: 'base',
+                visible: false,
+                source: new ol.source.OSM(),
+            });
+
+            const baseMaps = new ol.layer.Group({
+                title: 'Base maps',
+                layers: [osm, inputRasterLayer]
+            });
+
+            window.map = new ol.Map({
+                target: 'map',
+                layers: [
+                    baseMaps,
+                    outputVectorizedLayer
+                ],
+                view: new ol.View({
+                    center: [2385044, 5154446],
+                    zoom: 15,
+                })
+            });
+
+            const layerSwitcher = new ol.control.LayerSwitcher({
+                reverse: true,
+                groupSelectStyle: 'group'
+            });
+
+            map.addControl(layerSwitcher);
+        });
+
+    </script>
+}

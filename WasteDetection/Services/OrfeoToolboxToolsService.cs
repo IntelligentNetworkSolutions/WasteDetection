@@ -142,7 +142,7 @@ namespace WasteDetection.Services
             return await Task.FromResult((request.OutModelPath, absoluteOutModelPath));
         }
 
-        public async Task<(string, string)> ImageClassification(ImageClassificationRequest request)
+        public async Task<(string, string, string, string)> ImageClassification(ImageClassificationRequest request)
         {
             /*
              * string commandArguments = "-in \"C:/Work Projects/WasteDetection/Data/1to10/1to10.tif\" 
@@ -165,14 +165,14 @@ namespace WasteDetection.Services
             string absoluteOutConfidenceMapPath =
                 Path.Join(Environment.CurrentDirectory, "wwwroot", outBasePath, "confidence_" + outputGuid + ".tif");
 
-            request.OutRasterPath = absoluteOutRasterPath;
-            request.OutConfidenceMapPath = absoluteOutConfidenceMapPath;
+            request.OutRasterPath = Path.Join(outBasePath, "classification_" + outputGuid + ".tif");
+            request.OutConfidenceMapPath = Path.Join(outBasePath, "confidence_" + outputGuid + ".tif");
 
             string inpImageArg = $"-in \"{request.InpImgPath}\" ";
             string inpModelArg = $"-model \"{request.InpModelPath}\" ";
             string inputXmlStatisticsArg = $"-imstat \"{request.InpXmlStatisticsPath}\" ";
-            string outputRasterArg = $"-out \"{request.OutRasterPath}\" ";
-            string outputConfidenceMapArg = $"uint8 -confmap  \"{request.OutConfidenceMapPath}\" ";
+            string outputRasterArg = $"-out \"{absoluteOutRasterPath}\" ";
+            string outputConfidenceMapArg = $"uint8 -confmap  \"{absoluteOutConfidenceMapPath}\" ";
             string ramArg = "double -ram 256 ";
 
             string trainingCommandArguments =
@@ -191,7 +191,16 @@ namespace WasteDetection.Services
             if (!File.Exists(absoluteOutConfidenceMapPath))
                 throw new Exception($"Can't find Classified Image Confidence Map");
 
-            return (absoluteOutRasterPath, absoluteOutConfidenceMapPath);
+            ImageClassificationRequest? requestFromDb =
+                await _dataContext.ImageClassificationRequests.FindAsync(request.Id);
+            if (requestFromDb == null)
+                throw new Exception("TrainImageClassificatierRequest Not Found in Db");
+
+            requestFromDb.Suceeded = true;
+            int resultUpdate = await _dataContext.SaveChangesAsync();
+
+            return (requestFromDb.OutRasterPath, absoluteOutRasterPath, 
+                    requestFromDb.OutConfidenceMapPath, absoluteOutConfidenceMapPath);
         }
 
         private async Task<CommandTask<CommandResult>> GetConfiguredOrfeoToolboxCommandTask(string scriptName, 
@@ -203,13 +212,8 @@ namespace WasteDetection.Services
             using CancellationTokenSource forcefulCts = new CancellationTokenSource();
             using CancellationTokenSource gracefulCts = new CancellationTokenSource();
 
-            // Cancel forcefully after a timeout of 10 seconds
-            forcefulCts.CancelAfter(TimeSpan.FromSeconds(360));
-
-            // Cancel gracefully after a timeout of 180 seconds.
-            // If the process takes too long to respond to graceful cancellation,
-            // it will eventually get killed by forceful cancellation configured above.
-            gracefulCts.CancelAfter(TimeSpan.FromSeconds(180));
+            forcefulCts.CancelAfter(TimeSpan.FromHours(4));
+            gracefulCts.CancelAfter(TimeSpan.FromHours(2));
 
             string? orfeoToolboxPath = _settingsService.GetOrfeoToolboxToolsPath();
 

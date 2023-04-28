@@ -25,7 +25,24 @@
             <div id="loading" class="col-12 h-50 text-center d-none p-4">
                 <i class="fa-solid fa-users-viewfinder fa-spin fa-4x"></i>
             </div>
-            <div id="divResult" class="bg-secondary">
+            <div id="divResult" class="grid-two">
+                <div class="text-center">
+                    <label class="form-label" onclick="CopyModelPathToClipBoard()">
+                        Copy the Sieved Image Path to use in the next step <i class="fa-solid fa-copy"></i>
+                    </label>
+                    <hr />
+                    <input id="resultModelPath" type="text" class="form-control" />
+                </div>
+                <div class="text-center">
+                    <label class="form-label">
+                        Download Sieved Image for further use <i class="fa-solid fa-download"></i></i>
+                    </label>
+                    <hr />
+                    <a id="linkModelPath" href="#" class="btn btn-outline-primary">
+                        Download Sieved Tif File (.tif)
+                    </a>
+                </div>
+
             </div>
         </div>
     </div>
@@ -61,9 +78,12 @@
                 contentType: false,
                 processData: false,
                 data: fileData,
-                success: function (data) {
-                    if (data) {
-                        ShowResult(data);
+                success: function (response) {
+                    if (response) {
+                        let splitPaths = response.split('---');
+                        let relativePath = splitPaths[0];
+                        let absolutePath = splitPaths[1];
+                        ShowResult(relativePath, absolutePath);
                     }
                     else {
                         swal("error");
@@ -78,8 +98,24 @@
             });
         }
 
-        function ShowResult(data) {
-            alert(data);
+        function ShowResult(modelRelativePath, modelAbsolutePath) {
+            $("#divResult").removeClass('d-none');
+            $("#resultModelPath").val(modelAbsolutePath);
+            $("#resultModelPath").text(modelAbsolutePath);
+            $("#linkModelPath").attr("href", modelRelativePath);
+        }
+
+
+        function CopyModelPathToClipBoard() {
+            // Get the text field
+            var copyText = document.getElementById("resultModelPath");
+
+            // Select the text field
+            copyText.select();
+            copyText.setSelectionRange(0, 99999); // For mobile devices
+
+            // Copy the text inside the text field
+            navigator.clipboard.writeText(copyText.value);
         }
 
     </script>

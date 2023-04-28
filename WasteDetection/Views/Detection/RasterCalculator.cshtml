@@ -35,7 +35,22 @@
                 <i class="fa-solid fa-calculator fa-spin fa-4x"></i>
             </div>
             <div id="divResult" class="">
-                <div id="map" class="map col-12" style="height: 500px;"></div>
+                <div class="text-center">
+                    <label class="form-label" onclick="CopyModelPathToClipBoard()">
+                        Copy the Model Path to use in the next step <i class="fa-solid fa-copy"></i>
+                    </label>
+                    <hr />
+                    <input id="resultModelPath" type="text" class="form-control" />
+                </div>
+                <div class="text-center">
+                    <label class="form-label">
+                        Download Model for further use <i class="fa-solid fa-download"></i></i>
+                    </label>
+                    <hr />
+                    <a id="linkModelPath" href="#" class="btn btn-outline-primary">
+                        Download Model File (.mdl)
+                    </a>
+                </div>
             </div>
         </div>
     </div>
@@ -55,6 +70,18 @@
         $(function () {
         });
 
+        function CopyModelPathToClipBoard() {
+            // Get the text field
+            var copyText = document.getElementById("resultModelPath");
+
+            // Select the text field
+            copyText.select();
+            copyText.setSelectionRange(0, 99999); // For mobile devices
+
+            // Copy the text inside the text field
+            navigator.clipboard.writeText(copyText.value);
+        }
+
         function RasterCalculator() {
             $("#loading").removeClass("d-none");
 
@@ -72,9 +99,13 @@
                 contentType: false,
                 processData: false,
                 data: fileData,
-                success: function (data) {
-                    if (data) {
-                        ShowResult(data);
+                success: function (response) {
+                    console.log(response);
+                    if (response) {
+                        let splitPaths = response.split('---');
+                        let relativePath = splitPaths[0];
+                        let absolutePath = splitPaths[1];
+                        ShowResult(relativePath, absolutePath);
                     }
                     else {
                         swal("error");
@@ -89,8 +120,11 @@
             });
         }
 
-        function ShowResult(data) {
-            alert(data);
+        function ShowResult(modelRelativePath, modelAbsolutePath) {
+            $("#divResult").removeClass('d-none');
+            $("#resultModelPath").val(modelAbsolutePath);
+            $("#resultModelPath").text(modelAbsolutePath);
+            $("#linkModelPath").attr("href", modelRelativePath);
         }
 
     </script>

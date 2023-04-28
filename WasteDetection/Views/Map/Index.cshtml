@@ -38,8 +38,8 @@
             });
 
             const inputTrainingVectorLayer = new ol.layer.Vector({
-                title: 'training_vector',
-                visible: true,
+                title: 'input_training_vector',
+                visible: false,
                 source: new ol.source.Vector({
                     projection: 'EPSG:3857',
                     url: '/detection/prepared_inputs/training_layers/training_classes.json',
@@ -47,14 +47,14 @@
                 }),
                 style: new ol.style.Style({
                     fill: new ol.style.Fill({
-                        color: 'blue',
+                        color: 'orange',
                     }),
                 }),
             });
 
             const inputValidationVectorLayer = new ol.layer.Vector({
-                title: 'validation_vector',
-                visible: true,
+                title: 'input_validation_vector',
+                visible: false,
                 source: new ol.source.Vector({
                     projection: 'EPSG:3857',
                     url: '/detection/prepared_inputs/control_layers/control_classes.json',
@@ -62,18 +62,17 @@
                 }),
                 style: new ol.style.Style({
                     fill: new ol.style.Fill({
-                        color: 'midnightblue',
+                        color: 'yellow',
                     }),
                 }),
             });
 
             const outputVectorizedLayer = new ol.layer.Vector({
-                title: 'vectorized_result',
-                //type: 'base',
+                title: 'output_vectorized_result',
                 visible: true,
                 source: new ol.source.Vector({
                     projection: 'EPSG:3857',
-                    url: '/detection/polygonize/latest_correct.json',
+                    url: '/detection/prepared_inputs/polygonize/latest_correct.json',
                     format: new ol.format.GeoJSON({ dataProjection: 'EPSG:3857' }),
                 }),
                 style: new ol.style.Style({
@@ -86,7 +85,7 @@
             const osm = new ol.layer.Tile({
                 title: 'osm',
                 type: 'base',
-                visible: true,
+                visible: false,
                 source: new ol.source.OSM(),
             });
 
@@ -105,7 +104,7 @@
                 ],
                 view: new ol.View({
                     center: [2385044,5154446],
-                    zoom: 10,
+                    zoom: 15,
                 })
             });
 
