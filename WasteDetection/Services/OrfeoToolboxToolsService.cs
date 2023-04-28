@@ -220,7 +220,8 @@ namespace WasteDetection.Services
                     .WithWorkingDirectory(Environment.CurrentDirectory)
                     .WithArguments(commandArguments)
                     .WithValidation(CommandResultValidation.None)
-                    .WithStandardErrorPipe(PipeTarget.ToFile("C:\\Logs\\WasteDetection\\ErrorLogCliWrap.txt"))
+                    .WithStandardOutputPipe(PipeTarget.ToFile("\\logs\\stdoutOrfeo.txt"))
+                    .WithStandardErrorPipe(PipeTarget.ToFile("\\logs\\ErrorLogCliWrapOrfeo.txt"))
                     .ExecuteAsync();
             //.ExecuteAsync(forcefulCts.Token, gracefulCts.Token);
 

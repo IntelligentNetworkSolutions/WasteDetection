@@ -170,7 +170,7 @@ namespace WasteDetection.Services
             _dataContext.RasterCalculatorRequests.Add(request);
             int resultAdd = await _dataContext.SaveChangesAsync();
             if (resultAdd <= 0)
-                throw new Exception("ComputeImageStatisticsRequest Not Inserted");
+                throw new Exception("RasterCalculatorRequest Not Inserted");
 
             string overwriteArg = " --overwrite ";
             string calculationArg = " --calc \"where(((B > 0.9) & (isin(A, [1, 7]))), 1, 0)\" ";
@@ -185,7 +185,7 @@ namespace WasteDetection.Services
                 $"{overwriteArg} {calculationArg} {outRasterFormatArg} {outRasterTypeArg} {inpLayerAPathArg} {inpLayerBPathArg} {compressAllArg} {outRasterPathArg} ";
 
             CommandTask<CommandResult>? commandTask =
-                await GetConfiguredGDALCommandTask(scriptName, trainingCommandArguments, ".bat");
+                await GetConfiguredGDALCommandTask(scriptName, trainingCommandArguments, "script");
 
             CommandResult? trainingCommandResult = await commandTask;
 
@@ -246,7 +246,7 @@ namespace WasteDetection.Services
                 $"{thresholdArg} {defaultParametersArg} {outputFormatArg} {inpLayerPathArg} {outputSievedPathArg} ";
 
             CommandTask<CommandResult>? commandTask =
-                await GetConfiguredGDALCommandTask(scriptName, trainingCommandArguments, ".bat");
+                await GetConfiguredGDALCommandTask(scriptName, trainingCommandArguments, "script");
 
             CommandResult? trainingCommandResult = await commandTask;
 
@@ -361,7 +361,7 @@ namespace WasteDetection.Services
             _dataContext.PolygonizeRequests.Add(request);
             int resultAdd = await _dataContext.SaveChangesAsync();
             if (resultAdd <= 0)
-                throw new Exception("ContourRequest Not Inserted");
+                throw new Exception("PolygonizeRequests Not Inserted");
 
             string inpLayerPathArg = $" \"{inpLayerPath}\" ";
             string defaultParametersArg = " -b 1 ";
@@ -372,7 +372,7 @@ namespace WasteDetection.Services
                 $"{inpLayerPathArg} {defaultParametersArg} {outputVectorizedPathArg} {outputFieldName} ";
 
             CommandTask<CommandResult>? commandTask =
-                await GetConfiguredGDALCommandTask(scriptName, trainingCommandArguments);
+                await GetConfiguredGDALCommandTask(scriptName, trainingCommandArguments, "script");
 
             CommandResult? trainingCommandResult = await commandTask;
 
@@ -413,40 +413,21 @@ namespace WasteDetection.Services
 
             string? gdalToolsExesPath = _settingsService.GetGDALToolsExesPath();
             string workingDirectory = Environment.CurrentDirectory;
-
-            if (!string.IsNullOrEmpty(scriptType) && scriptType == ".bat")
-            {
-                gdalToolsExesPath = _settingsService.GetGDALToolsBatsPath();
-                workingDirectory = gdalToolsExesPath;
-            }
-
-            //if (!string.IsNullOrEmpty(scriptType) && scriptType == ".py")
-            //{
-            //gdalToolsExesPath = "C:\\Program Files\\GDAL";
-                //workingDirectory = gdalToolsExesPath;
-            //}
-
             string targetProgram = Path.Combine(gdalToolsExesPath, scriptName);
+
+            if (!string.IsNullOrEmpty(scriptType) && scriptType == "script")
+            {
+                targetProgram = _settingsService.GetCmdPath();
+                commandArguments = " /k " + scriptName + " " + commandArguments;
+            }
 
             CommandTask<CommandResult>? commandTask =
                 Cli.Wrap(targetProgram)
-                    //.WithWorkingDirectory(workingDirectory)
-                    .WithWorkingDirectory(Environment.CurrentDirectory)
-                    .WithEnvironmentVariables(env => env
-                        //.Set("Path", "C:\\Python311;C:\\Python311\\Scripts;C:\\Program Files\\GDAL;")
-                        //.Set("PROJ_LIB", "C:\\Program Files\\GDAL\\projlib")
-                        //.Set("GDAL_DATA", "C:\\Program Files\\GDAL\\gdal-data")
-                        //.Set("GDAL_DRIVER_PATH", "C:\\Program Files\\GDAL\\gdalplugins")
-                        .Set("Path", "C:\\Program Files\\QGIS 3.28.5\\apps\\Python39;C:\\Program Files\\QGIS 3.28.5\\apps\\Python39\\Scripts")
-                        .Set("PROJ_LIB", "C:\\Program Files\\QGIS 3.28.5\\share\\proj")
-                        .Set("GDAL_DATA", "C:\\Program Files\\QGIS 3.28.5\\apps\\gdal\\share\\gdal")
-                        .Set("GDAL_DRIVER_PATH", "C:\\Program Files\\QGIS 3.28.5\\apps\\gdal\\lib\\gdalplugins")
-                        .Set("%OSGEO4W_ROOT%", "C:\\Program Files\\QGIS 3.28.5")
-                        .Set("OSGEO4W_ROOT", "C:\\Program Files\\QGIS 3.28.5")
-                    )
+                    .WithWorkingDirectory(Path.GetDirectoryName(targetProgram).ToString())
                     .WithArguments(commandArguments)
                     .WithValidation(CommandResultValidation.None)
-                    .WithStandardErrorPipe(PipeTarget.ToFile("C:\\Logs\\WasteDetection\\ErrorLogCliWrap.txt"))
+                    .WithStandardOutputPipe(PipeTarget.ToFile("\\logs\\stdoutGDAL.txt"))
+                    .WithStandardErrorPipe(PipeTarget.ToFile("\\logs\\ErrorLogCliWrapGDAL.txt"))
                     .ExecuteAsync(forcefulCts.Token, gracefulCts.Token);
 
             if (commandTask is null)

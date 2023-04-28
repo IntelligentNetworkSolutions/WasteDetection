@@ -93,5 +93,18 @@
             return outBasePath;
         }
         #endregion
+
+        #region Cmd
+        //CmdPath
+        public string GetCmdPath()
+        {
+            string? cmdPath = _configuration.GetValue<string>("CmdPath");
+
+            if (string.IsNullOrEmpty(cmdPath))
+                throw new Exception("CmdPath Not Found");
+
+            return cmdPath;
+        }
+        #endregion
     }
 }
