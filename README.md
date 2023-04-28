@@ -116,24 +116,31 @@ Prototype for WasteDetection using high quality Satellite Imagery
 
 ### Data used
 
-Input Image:
-\detection\prepared_inputs\1to10.tif
+- **All inputs are full paths**
 
-Input Statistics:
-\prepared_inputs\statistics\1to10.xml
+- Input Image (full process, calculate image statistics, train image classifier, image classification):
+- - ...\detection\prepared_inputs\1to10.tif
 
-Input Model:
-\prepared_inputs\models\model_1to10.mdl
+- Input Statistics:
+- - ...\prepared_inputs\statistics\1to10.xml
 
-Image Classifier Output:
-C:\WasteDetection\WasteDetection\wwwroot\detection\image_classifier\calculated\classification_f1ef0b33-92c4-43ed-8721-20f180ff4202.tif
-C:\WasteDetection\WasteDetection\wwwroot\detection\image_classifier\calculated\confidence_f1ef0b33-92c4-43ed-8721-20f180ff4202.tif
+- Input Model:  
+- - ...\prepared_inputs\models\model_1to10.mdl
 
-Raster Calculation Output:
-C:\WasteDetection\WasteDetection\wwwroot\detection\raster_calculator\calculated\raster_calculation_93b49509-5d75-4a5a-8b66-ecfd5d9d43c0.tif
+- Input Training Layer:  
+- - ...\detection\prepared_inputs\training_layers\training_classes.shp
 
-Sieve Output:
-C:\WasteDetection\WasteDetection\wwwroot\detection\sieve\calculated\sieve_fe074f44-0bc5-45fe-95fb-a0b3e5363d45.tif
+- Input Control Layer:
+- - ...\detection\prepared_inputs\control_layers\control_classes.shp
+
+- Input for Raster Calculation:
+- - Input is Output from Image Classification
+
+- Input for Sieve:
+- - Input is Output from Raster Calculation
+
+- Input for Polygonize:
+- - Input is Output from Sieve
 
 ### Map  
 - An Open Layers Map  
