@@ -119,28 +119,28 @@ Prototype for WasteDetection using high quality Satellite Imagery
 - **All inputs are full paths**
 
 - Input Image (full process, calculate image statistics, train image classifier, image classification):
-- - ...\detection\prepared_inputs\1to10.tif
+    - ...\detection\prepared_inputs\1to10.tif
 
 - Input Statistics:
-- - ...\prepared_inputs\statistics\1to10.xml
+    - ...\prepared_inputs\statistics\1to10.xml
 
 - Input Model:  
-- - ...\prepared_inputs\models\model_1to10.mdl
+    - ...\prepared_inputs\models\model_1to10.mdl
 
 - Input Training Layer:  
-- - ...\detection\prepared_inputs\training_layers\training_classes.shp
+    - ...\detection\prepared_inputs\training_layers\training_classes.shp
 
 - Input Control Layer:
-- - ...\detection\prepared_inputs\control_layers\control_classes.shp
+    - ...\detection\prepared_inputs\control_layers\control_classes.shp
 
 - Input for Raster Calculation:
-- - Input is Output from Image Classification
+    - Input is Output from Image Classification
 
 - Input for Sieve:
-- - Input is Output from Raster Calculation
+    - Input is Output from Raster Calculation
 
 - Input for Polygonize:
-- - Input is Output from Sieve
+    - Input is Output from Sieve
 
 ### Map  
 - An Open Layers Map  
