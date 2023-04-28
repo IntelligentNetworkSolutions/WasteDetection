@@ -240,11 +240,11 @@ namespace WasteDetection.Controllers
         {
             //inpImgPath = "C:\\Visual Studio Projects\\WasteDetection\\WasteDetection\\wwwroot\\detection\\prepared_inputs\\1to10.tif";
 
-            string transaltedInpImgAbsPath = await _GDALToolsService.TranslateLayer(inpImgPath);
+            //string transaltedInpImgAbsPath = await _GDALToolsService.TranslateLayer(inpImgPath);
 
-            await _GDALToolsService.BuildPyramids(transaltedInpImgAbsPath);
+            //await _GDALToolsService.BuildPyramids(transaltedInpImgAbsPath);
 
-            string xmlStatisticsRelPath = await _orfeoToolboxToolsService.ComputeImageStatistics(transaltedInpImgAbsPath);
+            string xmlStatisticsRelPath = await _orfeoToolboxToolsService.ComputeImageStatistics(inpImgPath);
             string xmlStatisticsAbsPath = Path.Join(Environment.CurrentDirectory, "wwwroot", xmlStatisticsRelPath);
 
             string trainingVectorAbsPath = Path.Join(Environment.CurrentDirectory, "wwwroot", "\\detection\\prepared_inputs\\training_layers\\training_classes.shp");
@@ -279,8 +279,8 @@ namespace WasteDetection.Controllers
 
             (string outSieverelPath, string outSieveAbsPath) = await _GDALToolsService.Sieve(outRasterCalculatorAbsPath);
 
-            string outPolygonizeAbsPath = await _GDALToolsService.Polygonize(outSieveAbsPath);
-            return "OK";
+            string outPolygonizeRelPath = await _GDALToolsService.Polygonize(outSieveAbsPath);
+            return outPolygonizeRelPath;
         }
     }
 }

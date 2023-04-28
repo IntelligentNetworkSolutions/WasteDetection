@@ -2,6 +2,12 @@
     ViewData["Title"] = "Polygonize";
 }
 
+@section Styles{
+    <link rel="stylesheet" href="/css/ol/ol.css">
+    <link rel="stylesheet" href="/css/ol/ol-ext.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/ol-layerswitcher@4.1.1/dist/ol-layerswitcher.css" />
+}
+
 <div class="row">
     <div class="grid-two">
         <div class="block-card">
@@ -25,7 +31,8 @@
             <div id="loading" class="col-12 h-50 text-center d-none p-4">
                 <i class="fa-solid fa-draw-polygon fa-spin fa-4x"></i>
             </div>
-            <div id="divResult" class="bg-secondary">
+            <div id="divResult">
+                <div id="map" class="map" style="width: 500px; height: 500px;"></div>
             </div>
         </div>
     </div>
@@ -38,10 +45,16 @@
 </div>
 
 @section Scripts {
+    <script src="/lib/proj4/proj4-src.js"></script>
+    <script src="/lib/ol/ol.js"></script>
+    <script src="/lib/ol/ol-ext.min.js"></script>
+    <script src="/lib/geotiff/geotiff.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/elm-pep@1.0.6/dist/elm-pep.js"></script>
+    <script src="https://unpkg.com/ol-layerswitcher@4.1.1"></script>
 
     <script type="text/javascript">
-
-        
+        var inputRasterPath = null;
+        var outputVectorLayerPath = null;
 
         function Polygonize() {
             $("#loading").removeClass("d-none");
@@ -59,6 +72,7 @@
                 data: fileData,
                 success: function (data) {
                     if (data) {
+                        console.log(data);
                         outputVectorLayerPath = data;
                         ShowResult(data);
                     }
@@ -75,15 +89,21 @@
             });
         }
 
-        function ShowResult(data) {
-            alert(data);
+        function AddColorToClassLayer(feature){
+            var color = 'red';
+            if(feature.get('class') == '0')
+                color = 'transparent';
+
+            return new ol.style.Style({
+                fill: new ol.style.Fill({
+                    color: color,
+                })
+            });
         }
 
-        var inputRasterPath = null;
-        var outputVectorLayerPath = null;
-
-        $(function () {
-
+        function ShowResult(data) {
+            console.log('ShowResult');
+            console.log(data);
             const inputRasterLayer = new ol.layer.WebGLTile({
                 title: 'input_image',
                 type: 'base',
@@ -97,7 +117,8 @@
                 }),
             });
 
-            outputVectorLayerPath = '/detection/prepared_inputs/polygonize/latest_correct.json';
+            outputVectorLayerPath = data.replaceAll('\\', '/');
+            console.log(outputVectorLayerPath);
             const outputVectorizedLayer = new ol.layer.Vector({
                 title: 'output_vectorized_result',
                 visible: true,
@@ -106,11 +127,9 @@
                     url: outputVectorLayerPath,
                     format: new ol.format.GeoJSON({ dataProjection: 'EPSG:3857' }),
                 }),
-                style: new ol.style.Style({
-                    fill: new ol.style.Fill({
-                        color: 'red',
-                    }),
-                }),
+                style: function(feature){
+                    return AddColorToClassLayer(feature);
+                },
             });
 
             const osm = new ol.layer.Tile({
@@ -143,7 +162,7 @@
             });
 
             map.addControl(layerSwitcher);
-        });
+        }
 
     </script>
 }

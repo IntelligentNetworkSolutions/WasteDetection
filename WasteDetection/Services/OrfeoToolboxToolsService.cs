@@ -168,6 +168,11 @@ namespace WasteDetection.Services
             request.OutRasterPath = Path.Join(outBasePath, "classification_" + outputGuid + ".tif");
             request.OutConfidenceMapPath = Path.Join(outBasePath, "confidence_" + outputGuid + ".tif");
 
+            _dataContext.ImageClassificationRequests.Add(request);
+            int resultAdd = await _dataContext.SaveChangesAsync();
+            if (resultAdd <= 0)
+                throw new Exception("ImageClassificationRequests Not Inserted");
+
             string inpImageArg = $"-in \"{request.InpImgPath}\" ";
             string inpModelArg = $"-model \"{request.InpModelPath}\" ";
             string inputXmlStatisticsArg = $"-imstat \"{request.InpXmlStatisticsPath}\" ";
@@ -194,7 +199,7 @@ namespace WasteDetection.Services
             ImageClassificationRequest? requestFromDb =
                 await _dataContext.ImageClassificationRequests.FindAsync(request.Id);
             if (requestFromDb == null)
-                throw new Exception("TrainImageClassificatierRequest Not Found in Db");
+                throw new Exception("ImageClassificationRequests Not Found in Db");
 
             requestFromDb.Suceeded = true;
             int resultUpdate = await _dataContext.SaveChangesAsync();
@@ -224,8 +229,8 @@ namespace WasteDetection.Services
                     .WithWorkingDirectory(Environment.CurrentDirectory)
                     .WithArguments(commandArguments)
                     .WithValidation(CommandResultValidation.None)
-                    .WithStandardOutputPipe(PipeTarget.ToFile("\\logs\\stdoutOrfeo.txt"))
-                    .WithStandardErrorPipe(PipeTarget.ToFile("\\logs\\ErrorLogCliWrapOrfeo.txt"))
+                    .WithStandardOutputPipe(PipeTarget.ToFile("C:\\WasteDetection\\WasteDetection\\wwwroot\\logs\\stdoutOrfeo.txt"))
+                    .WithStandardErrorPipe(PipeTarget.ToFile("C:\\WasteDetection\\WasteDetection\\wwwroot\\logs\\ErrorLogCliWrapOrfeo.txt"))
                     .ExecuteAsync();
             //.ExecuteAsync(forcefulCts.Token, gracefulCts.Token);
 

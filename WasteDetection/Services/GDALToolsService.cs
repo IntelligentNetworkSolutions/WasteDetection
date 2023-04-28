@@ -390,7 +390,7 @@ namespace WasteDetection.Services
             requestFromDb.Suceeded = true;
             int resultUpdate = await _dataContext.SaveChangesAsync();
 
-            return absoluteOutPolygonizedPath;
+            return relativeOutPolygonizedPath;
         }
 
         private async Task<CommandTask<CommandResult>> GetConfiguredGDALCommandTask(string scriptName,
@@ -421,8 +421,8 @@ namespace WasteDetection.Services
                     .WithWorkingDirectory(Path.GetDirectoryName(targetProgram).ToString())
                     .WithArguments(commandArguments)
                     .WithValidation(CommandResultValidation.None)
-                    .WithStandardOutputPipe(PipeTarget.ToFile("\\logs\\stdoutGDAL.txt"))
-                    .WithStandardErrorPipe(PipeTarget.ToFile("\\logs\\ErrorLogCliWrapGDAL.txt"))
+                    .WithStandardOutputPipe(PipeTarget.ToFile("C:\\WasteDetection\\WasteDetection\\wwwroot\\logs\\stdoutGDAL.txt"))
+                    .WithStandardErrorPipe(PipeTarget.ToFile("C:\\WasteDetection\\WasteDetection\\wwwroot\\logs\\ErrorLogCliWrapGDAL.txt"))
                     .ExecuteAsync(forcefulCts.Token, gracefulCts.Token);
 
             if (commandTask is null)

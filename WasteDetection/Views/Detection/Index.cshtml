@@ -2,6 +2,12 @@
     ViewData["Title"] = "Detection";
 }
 
+@section Styles{
+    <link rel="stylesheet" href="/css/ol/ol.css">
+    <link rel="stylesheet" href="/css/ol/ol-ext.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/ol-layerswitcher@4.1.1/dist/ol-layerswitcher.css" />
+}
+
 <div class="row">
     <h4 class="text-center"></h4>
     <div class="grid-two mt-4">
@@ -11,9 +17,9 @@
             </h4>
             <div class="form-group col-md-6 col-sm-12">
                 <label class="form-label">Input the path to the downloaded image (Download Image step) </label>
-                <input id="inpLayerPath" type="text" class="form-control" />
+                <input id="inpImgPath" type="text" class="form-control" />
             </div>
-            <a href="@Url.Action("InputImagePath", "Detection")" class="btn btn-outline-primary mt-3 text-end fa-pull-right">
+            <a onclick="FullProcess();" class="btn btn-outline-primary mt-3 text-end fa-pull-right">
                 Start Process <i class="fa-solid fa-microchip fa-1x"></i>
             </a>
         </div>
@@ -23,10 +29,133 @@
             </h4>
             <hr />
             <div id="loading" class="col-12 h-50 text-center d-none p-4">
-                <i class="fa-solid fa-dumbbell fa-spin fa-4x"></i>
+                <i class="fa-solid fa-microchip fa-spin fa-4x"></i>
             </div>
-            <div id="divResult" class="bg-secondary">
+            <div id="divResult">
+                <div id="map" class="map col-10" style="height: 500px;"></div>
             </div>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script src="/lib/proj4/proj4-src.js"></script>
+    <script src="/lib/ol/ol.js"></script>
+    <script src="/lib/ol/ol-ext.min.js"></script>
+    <script src="/lib/geotiff/geotiff.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/elm-pep@1.0.6/dist/elm-pep.js"></script>
+    <script src="https://unpkg.com/ol-layerswitcher@4.1.1"></script>
+
+    <script type="text/javascript">
+        var inputRasterPath = null;
+        var outputVectorLayerPath = null;
+
+        function FullProcess() {
+            $("#loading").removeClass("d-none");
+
+            let filePath = $("#inpImgPath").val();
+            inputRasterPath = filePath;
+            let fileData = new FormData();
+            fileData.append("inpImgPath", filePath);
+
+            $.ajax({
+                url: "@Url.Action("OneForAllForOne", "Detection")",
+                type: "POST",
+                contentType: false,
+                processData: false,
+                data: fileData,
+                success: function (data) {
+                    if (data) {
+                        outputVectorLayerPath = data;
+                        ShowResult(data);
+                    }
+                    else {
+                        swal("error");
+                    }
+                },
+                error: function (req, status, error) {
+                    swal("error");
+                },
+                complete: function () {
+                    $("#loading").addClass("d-none");
+                }
+            });
+        }
+
+        function AddColorToClassLayer(feature) {
+            var color = 'red';
+            if (feature.get('class') == '0')
+                color = 'transparent';
+
+            return new ol.style.Style({
+                fill: new ol.style.Fill({
+                    color: color,
+                })
+            });
+        }
+
+        function ShowResult(data) {
+            console.log('ShowResult');
+            console.log(data);
+            const inputRasterLayer = new ol.layer.WebGLTile({
+                title: 'input_image',
+                type: 'base',
+                visible: true,
+                source: new ol.source.GeoTIFF({
+                    sources: [
+                        {
+                            url: '/detection/prepared_inputs/1to10_gdal_rendered.tif',
+                        },
+                    ],
+                }),
+            });
+
+            outputVectorLayerPath = data.replaceAll('\\', '/');
+            console.log(outputVectorLayerPath);
+            const outputVectorizedLayer = new ol.layer.Vector({
+                title: 'output_vectorized_result',
+                visible: true,
+                source: new ol.source.Vector({
+                    projection: 'EPSG:3857',
+                    url: outputVectorLayerPath,
+                    format: new ol.format.GeoJSON({ dataProjection: 'EPSG:3857' }),
+                }),
+                style: function (feature) {
+                    return AddColorToClassLayer(feature);
+                },
+            });
+
+            const osm = new ol.layer.Tile({
+                title: 'osm',
+                type: 'base',
+                visible: false,
+                source: new ol.source.OSM(),
+            });
+
+            const baseMaps = new ol.layer.Group({
+                title: 'Base maps',
+                layers: [osm, inputRasterLayer]
+            });
+
+            window.map = new ol.Map({
+                target: 'map',
+                layers: [
+                    baseMaps,
+                    outputVectorizedLayer
+                ],
+                view: new ol.View({
+                    center: [2385044, 5154446],
+                    zoom: 15,
+                })
+            });
+
+            const layerSwitcher = new ol.control.LayerSwitcher({
+                reverse: true,
+                groupSelectStyle: 'group'
+            });
+
+            map.addControl(layerSwitcher);
+        }
+
+    </script>
+}
