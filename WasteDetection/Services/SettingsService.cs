@@ -47,7 +47,6 @@
         }
         #endregion
 
-
         #region GDAL
         public string GetGDALToolsExesPath()
         {

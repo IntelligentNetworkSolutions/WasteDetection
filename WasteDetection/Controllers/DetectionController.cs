@@ -7,14 +7,11 @@ namespace WasteDetection.Controllers
 {
     public class DetectionController : Controller
     {
-        private readonly SettingsService _settingsService;
         private OrfeoToolboxToolsService _orfeoToolboxToolsService;
         private GDALToolsService _GDALToolsService;
 
-        public DetectionController(SettingsService settingsService, 
-            OrfeoToolboxToolsService orfeoToolboxToolsService, GDALToolsService gDALToolsService)
+        public DetectionController(OrfeoToolboxToolsService orfeoToolboxToolsService, GDALToolsService gDALToolsService)
         {
-            _settingsService = settingsService;
             this._orfeoToolboxToolsService = orfeoToolboxToolsService;
             _GDALToolsService = gDALToolsService;
         }
@@ -28,44 +25,6 @@ namespace WasteDetection.Controllers
         {
             return View();
         }
-
-        #region TranslateLayer
-        [HttpGet]
-        public IActionResult TranslateLayer()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public async Task<string> TranslateLayer(string inpLayerPath)
-        {
-            if (string.IsNullOrEmpty(inpLayerPath))
-                throw new ArgumentNullException(nameof(inpLayerPath));
-
-            string resultFilePath = await _GDALToolsService.TranslateLayer(inpLayerPath);
-
-            return resultFilePath;
-        }
-        #endregion
-
-        #region BuildPyramids
-        [HttpGet]
-        public IActionResult BuildPyramids()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public async Task<string> BuildPyramids(string inpLayerPath)
-        {
-            if (string.IsNullOrEmpty(inpLayerPath))
-                throw new ArgumentNullException(nameof(inpLayerPath));
-
-            string resultFilePath = await _GDALToolsService.BuildPyramids(inpLayerPath);
-
-            return resultFilePath;
-        }
-        #endregion
 
         #region ComputeImageStatistics
         [HttpGet]
