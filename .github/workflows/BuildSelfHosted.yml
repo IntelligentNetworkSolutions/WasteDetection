@@ -5,7 +5,7 @@ on:
 
 jobs:
   build:
-    runs-on: [virt-arhitekt] # Ensure this matches your self-hosted runner labels
+    runs-on: [self-hosted, virt-arhitekt] # Ensure this matches your self-hosted runner labels
 
     steps:
       - name: Checkout repository
