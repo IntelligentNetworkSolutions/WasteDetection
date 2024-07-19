@@ -1,0 +1,29 @@
+name: NETBuildSelfHost
+
+on:
+  workflow_dispatch: # This event allows manual triggering
+
+jobs:
+  build:
+    runs-on: [self-hosted] # Ensure this matches your self-hosted runner labels
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 6.0.x
+
+      - name: Clean
+        run: dotnet clean --configuration Release
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
+
+      - name: Display OS version
+        run: echo "Running on $(uname -a)" # More accurate OS version display
