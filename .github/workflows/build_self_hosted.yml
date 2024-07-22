@@ -1,11 +1,11 @@
-name: NETBuildSelfHost
+name: build_self_hosted
 
 on:
   workflow_dispatch: # This event allows manual triggering
 
 jobs:
   build:
-    runs-on: [self-hosted] # Ensure this matches your self-hosted runner labels
+    runs-on: [self-hosted]
 
     steps:
       - name: Checkout repository
